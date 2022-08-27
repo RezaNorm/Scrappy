@@ -1,0 +1,28 @@
+ //div.jet-listing-grid__item:nth-child(24) > div:nth-child(1)
+  //div.jet-listing-grid__item:nth-child(22) > div:nth-child(1)
+  ///div.jet-listing-grid__item:nth-child(3) > div:nth-child(1)
+  //div.jet-listing-grid__item:nth-child(78) > div:nth-child(1)
+  //div.jet-listing-grid__item:nth-child(78) > div:nth-child(1) > a:nth-child(2)
+  //div.jet-listing-grid__item:nth-child(77) > div:nth-child(1) > a:nth-child(2)
+  //! stock number selector
+  //.elementor-element-135c588 > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)
+  //! vin selector
+  //.elementor-element-d4b3618 > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)
+  //! odometer selector
+  //.elementor-element-25920db3 > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)
+  //! transmission selector
+  //.elementor-element-60412d7 > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)
+  //! interior color selector
+  //.elementor-element-6948e935 > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)
+  //! drivettrain selector
+  //.elementor-element-2aa8539e > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)
+  //! photo selector
+  //a.e-gallery-item:nth-child(1)
+  //a.e-gallery-item:nth-child(2)
+  //a.e-gallery-item:nth-child(8)
+  //.attachment-large //? cover image
+  // Passenger element
+  //.elementor-element-6be3bb75 > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)
+  //autobunny dealership
+// const DEALERSHIP_URL = "https://www.khushiauto.ca/used-cars";
+// const DEALERSHIP_URL = "https://www.kmsfinecars.com/used-cars/";
