@@ -20,7 +20,7 @@
   //a.e-gallery-item:nth-child(1)
   //a.e-gallery-item:nth-child(2)
   //a.e-gallery-item:nth-child(8)
-  //.attachment-large //? cover image
+  ///body > div.elementor.elementor-1186.elementor-location-single.post-1265.vehicles.type-vehicles.status-publish.has-post-thumbnail.hentry.model-yukon.make-gmc.body-type-suv > section > div > div.elementor-column.elementor-col-50.elementor-top-column.elementor-element.elementor-element-1677abf > div > div.elementor-element.elementor-element-d6ef438.elementor-widget.elementor-widget-theme-post-featured-image.elementor-widget-image > div //? cover image
   // Passenger element
   //.elementor-element-6be3bb75 > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div:nth-child(1)
   //autobunny dealership
