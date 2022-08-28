@@ -4,8 +4,7 @@ import { Page } from "puppeteer";
 import { scrollPageToBottom } from "puppeteer-autoscroll-down";
 import Json from "./json.interface";
 import { writeFileSync } from "fs";
-import { resolve } from "path";
-import { ElementHandle } from "puppeteer";
+import axios from "axios";
 
 const DEALERSHIP_URL = "https://premiumdrive.ca/vehicles/";
 
@@ -16,7 +15,7 @@ const initialisePuppeteer = async (): Promise<void> => {
 
   const json: Json[] = [];
 
-  const page = await browser.newPage();
+  const page: Page = await browser.newPage();
 
   await page.goto(DEALERSHIP_URL, { waitUntil: "networkidle0" });
 
@@ -164,6 +163,7 @@ const initialisePuppeteer = async (): Promise<void> => {
   writeFileSync(`premium.json`, JSON.stringify(json), "utf8");
 
   await page.close();
+  return;
 };
 
 initialisePuppeteer();
