@@ -8,7 +8,7 @@ import axios from "axios";
 
 const DEALERSHIP_URL = "https://premiumdrive.ca/vehicles/";
 
-const initialisePuppeteer = async (): Promise<void> => {
+const initialiseScrappy = async (): Promise<void> => {
   const browser = await puppeteer.launch({
     headless: true,
   });
@@ -166,4 +166,4 @@ const initialisePuppeteer = async (): Promise<void> => {
   return;
 };
 
-initialisePuppeteer();
+(async () => await initialiseScrappy())();

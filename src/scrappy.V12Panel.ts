@@ -5,7 +5,7 @@ import Json from "./interfaces/json.interface";
 
 const DEALERSHIP_URL = "https://www.v12software.com/accounts_v2/signup2/login";
 
-const initialisePuppeteer = async (): Promise<void> => {
+const initialiseScrappy = async (): Promise<void> => {
   const browser = await puppeteer.launch({
     headless: false,
   });
@@ -324,9 +324,9 @@ const initialisePuppeteer = async (): Promise<void> => {
   }
   writeFileSync(`driveonV12.json`, JSON.stringify(json), "utf8");
   console.log("DONE");
-  await page.close();
+  await browser.close()
 
   return;
 };
 
-(async () => await initialisePuppeteer())();
+(async () => await initialiseScrappy())();
