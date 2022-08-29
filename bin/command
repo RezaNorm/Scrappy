@@ -1,0 +1,5 @@
+// bin/template-grabber
+#!/usr/bin/env node
+
+require = require('esm')(module /*, options*/);
+require('../src/interfaceCommand').interfaceCommand(process.argv);

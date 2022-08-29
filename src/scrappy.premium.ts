@@ -2,7 +2,7 @@
 import * as puppeteer from "puppeteer";
 import { Page } from "puppeteer";
 import { scrollPageToBottom } from "puppeteer-autoscroll-down";
-import Json from "./json.interface";
+import Json from "./interfaces/json.interface";
 import { writeFileSync } from "fs";
 import axios from "axios";
 
