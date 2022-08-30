@@ -1,24 +1,21 @@
 import { writeFileSync } from "fs";
 import * as puppeteer from "puppeteer";
-import { Page, EvaluateFunc, ElementHandle } from "puppeteer";
-import Json from "./interfaces/json.interface";
+import { Page, EvaluateFunc, ElementHandle, Browser } from "puppeteer";
+import Json from "../../interfaces/json.interface";
+import { credentials } from "../../credentials";
 
-const DEALERSHIP_URL = "https://www.v12software.com/accounts_v2/signup2/login";
-
-const initialiseScrappy = async (): Promise<void> => {
-  const browser = await puppeteer.launch({
-    headless: false,
-  });
-
+export default async function scrappyUnpublished(
+  browser: Browser
+): Promise<Json[]> {
   const json: Json[] = [];
 
   const page: Page = await browser.newPage();
-  await page.goto(DEALERSHIP_URL, { waitUntil: "domcontentloaded" });
+  await page.goto(credentials.LOGIN_URL, { waitUntil: "domcontentloaded" });
 
   //! type username pass
   await page.type("input[type='email']", "driveoncanada@gmail.com");
   await page.type("input[type='password']", "Onlyme2310!");
-
+  //! submit
   await page.click(
     "#app > div:nth-child(1) > div.undefined > section > div:nth-child(1) > div > form > button"
   );
@@ -26,7 +23,6 @@ const initialiseScrappy = async (): Promise<void> => {
   //! click on inventory when it shows
   await page.waitForSelector("#Menu > ul > li:nth-child(7) > a");
   await page.click("#Menu > ul > li:nth-child(7) > a");
-
   //! click on un-published inv when shown
   await page.waitForSelector(
     "#header > div:nth-child(11) > div.Header-Titleless > ul > li:nth-child(1) > a"
@@ -59,7 +55,7 @@ const initialiseScrappy = async (): Promise<void> => {
     );
     hrefs.push(`https://www.v12software.com/inventory/${link}`);
   }
-  hrefs = hrefs.flat()
+  hrefs = hrefs.flat();
 
   for (let href of hrefs) {
     const page: Page = await browser.newPage();
@@ -284,7 +280,7 @@ const initialiseScrappy = async (): Promise<void> => {
     ////*[@id="21"]/img
     ////*[@id="4"]/img
 
-    const images: any[] = [];
+    const images: string[] = [];
     if (+photoCount!)
       for (let i = 0; i <= +photoCount! - 1; i++) {
         await page.waitForXPath(`//*[@id="${i}"]/img`);
@@ -319,14 +315,8 @@ const initialiseScrappy = async (): Promise<void> => {
 
     json.push({ ...jsonData });
 
-    console.log(json.length);
-    await page.close();
+    await page.close()
   }
-  writeFileSync(`driveonV12.json`, JSON.stringify(json), "utf8");
-  console.log("DONE");
-  await browser.close()
 
-  return;
-};
-
-(async () => await initialiseScrappy())();
+  return json;
+}
