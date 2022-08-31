@@ -7,9 +7,9 @@ import { resolve } from "path";
 import promptChoice from "./prompt/prompt.choices";
 import scrappyV12 from "./V12/V12/scrappy.V12Panel";
 type information = {
-  username?: string;
-  password?: string;
-  link?: string;
+  username?: string 
+  password?: string 
+  link?: string
 };
 
 const initialiseScrappy = async (): Promise<void> => {
@@ -30,7 +30,7 @@ const initialiseScrappy = async (): Promise<void> => {
 
   switch (provider) {
     case "v12panel": {
-      json = await scrappyV12(browser);
+      json = await scrappyV12(browser,username,password);
       break;
     }
 

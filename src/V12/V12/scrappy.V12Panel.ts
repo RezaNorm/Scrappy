@@ -4,7 +4,11 @@ import { Page, EvaluateFunc, ElementHandle, Browser } from "puppeteer";
 import Json from "../../interfaces/json.interface";
 import { credentials } from "../../credentials";
 
-export default async function scrappyV12(browser: Browser): Promise<{}> {
+export default async function scrappyV12(
+  browser: Browser,
+  username: string
+  password: string
+): Promise<{}> {
   const json: { unpublished: Json[]; published: Json[]; sold: Json[] } = {
     unpublished: [],
     published: [],
@@ -15,8 +19,10 @@ export default async function scrappyV12(browser: Browser): Promise<{}> {
   await page.goto(credentials.LOGIN_URL, { waitUntil: "domcontentloaded" });
 
   //! type username pass
-  await page.type("input[type='email']", "driveoncanada@gmail.com");
-  await page.type("input[type='password']", "Onlyme2310!");
+  //driveoncanada@gmail.com
+  //Onlyme2310!
+  await page.type("input[type='email']", username);
+  await page.type("input[type='password']", password);
   //! submit
   await page.click(
     "#app > div:nth-child(1) > div.undefined > section > div:nth-child(1) > div > form > button"
@@ -65,7 +71,7 @@ export default async function scrappyV12(browser: Browser): Promise<{}> {
     );
     hrefsUnpublished.push(`https://www.v12software.com/inventory/${link}`);
   }
-  for (let i = 1; i<= +publish!; i++){
+  for (let i = 1; i <= +publish!; i++) {
     await page.waitForSelector(
       `#published > table.Block-List > tbody > tr:nth-child(${i}) > td.Cell-InvList-New-Vehicle.First-Column > a:nth-child(1)`
     );
@@ -600,8 +606,6 @@ export default async function scrappyV12(browser: Browser): Promise<{}> {
 
     await page.close();
   }
-
-
 
   return json;
 }
