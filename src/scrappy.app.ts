@@ -6,13 +6,18 @@ import scrappyUnpublished from "./V12/V12/scrappy.V12Panel";
 import { resolve } from "path";
 import promptChoice from "./prompt/prompt.choices";
 import scrappyV12 from "./V12/V12/scrappy.V12Panel";
+type information = {
+  username?: string;
+  password?: string;
+  link?: string;
+};
 
 const initialiseScrappy = async (): Promise<void> => {
   const prompt = new promptChoice();
   const chosenProvider = await promptChoice.selectOption();
   const { provider } = chosenProvider;
   const information = await prompt.checkProvider(chosenProvider);
-  
+  const { username, password, link } = information as information;
 
   // return;
   console.log("Please Wait...");
