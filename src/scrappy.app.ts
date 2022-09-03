@@ -2,14 +2,15 @@ import { writeFileSync } from "fs";
 import * as puppeteer from "puppeteer";
 import { Page, EvaluateFunc, ElementHandle } from "puppeteer";
 import Json from "./interfaces/json.interface";
-import scrappyUnpublished from "./V12/V12/scrappy.V12Panel";
+import scrappyUnpublished from "./V12/scrappy.V12Panel";
 import { resolve } from "path";
 import promptChoice from "./prompt/prompt.choices";
-import scrappyV12 from "./V12/V12/scrappy.V12Panel";
+import scrappyV12 from "./V12/scrappy.V12Panel";
+import { scrappyAutobunny } from "./autobunny/autobunny.scrappy";
 type information = {
-  username?: string 
-  password?: string 
-  link?: string
+  username?: string;
+  password?: string;
+  link?: string;
 };
 
 const initialiseScrappy = async (): Promise<void> => {
@@ -19,28 +20,34 @@ const initialiseScrappy = async (): Promise<void> => {
   const information = await prompt.checkProvider(chosenProvider);
   const { username, password, link } = information as information;
 
-  // return;
   console.log("Please Wait...");
 
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--window-size=1920,1080",
+    ],
   });
 
   let json: {} = {};
 
   switch (provider) {
     case "v12panel": {
-      json = await scrappyV12(browser,username,password);
+      json = await scrappyV12(browser, username, password);
       break;
     }
-
+    case "autobunny": {
+      json = await scrappyAutobunny(browser, link);
+    }
     default:
       break;
   }
   await browser.close();
 
   writeFileSync(
-    `${resolve("./json/v12panel.js")}`,
+    `${resolve(`./src/V12/json/${username?.split("@")[0]}`)}.json`,
     JSON.stringify(json),
     "utf8"
   );
