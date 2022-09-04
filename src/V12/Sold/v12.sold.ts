@@ -29,18 +29,30 @@ export default async function V12Sold(
 
   console.log(soldCount);
 
-  for (let i = 4; i <= +soldCount!; i++) {
-    await page?.waitForSelector(
-      `#header > div:nth-child(11) > table > tbody > tr:nth-child(${i}) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)`
-    ); //#header > div:nth-child(11) > table > tbody > tr:nth-child(4) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)
-    //#header > div:nth-child(11) > table > tbody > tr:nth-child(5) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)
-    //#header > div:nth-child(11) > table > tbody > tr:nth-child(22) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)
+  for (let i = 4; i <= +soldCount! + i; i++) {
+    if (i === 24) {
+      await page?.waitForSelector(
+        "#header > div:nth-child(11) > div.Win-Footer > div > a"
+      ); //
+      await page?.click(
+        "#header > div:nth-child(11) > div.Win-Footer > div > a"
+      );
+      i = 3;
+      continue;
+    }
+    try {
+      await page?.waitForSelector(
+        `#header > div:nth-child(11) > table > tbody > tr:nth-child(${i}) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)`
+      );
 
-    let link = await page?.$$eval(
-      `#header > div:nth-child(11) > table > tbody > tr:nth-child(${i}) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)`,
-      (element: any) => element.map((el: any) => el.getAttribute("href"))
-    );
-    hrefsSold.push(`https://www.v12software.com/inventory/${link}`);
+      let link = await page?.$$eval(
+        `#header > div:nth-child(11) > table > tbody > tr:nth-child(${i}) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)`,
+        (element: any) => element.map((el: any) => el.getAttribute("href"))
+      );
+      hrefsSold.push(`https://www.v12software.com/inventory/${link}`);
+    } catch (error) {
+      break;
+    }
   }
   for (let [index, href] of hrefsSold.entries()) {
     const page: Page = await browser.newPage();

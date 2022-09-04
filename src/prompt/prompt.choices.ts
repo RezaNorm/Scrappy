@@ -31,13 +31,13 @@ export default class promptChoice {
     provider: string;
   }): Promise<object | undefined> {
     const chosenProvider: string = provider["provider"];
-    console.log(chosenProvider)
+    console.log(chosenProvider);
     if (chosenProvider === "v12" || chosenProvider === "autobunny") {
       return await prompt([
         {
           type: "input",
           name: "link",
-          message: "Write website address",
+          message: "website address",
         },
       ]);
     }
@@ -46,14 +46,24 @@ export default class promptChoice {
         {
           type: "input",
           name: "username",
-          message: "Write username",
+          message: "username",
         },
         {
           type: "input",
           name: "password",
-          message: "Write password",
+          message: "password",
         },
       ]);
     }
+  }
+
+  static async fileName(): Promise<{ fileName: string }> {
+    return await prompt([
+      {
+        type: "input",
+        name: "fileName",
+        message: "output file name",
+      },
+    ]);
   }
 }

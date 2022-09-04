@@ -39,7 +39,7 @@ export default async function V12Published(
     if (i === 21) {
       await page?.waitForSelector(
         "#header > div:nth-child(11) > div.Win-Footer > div > a"
-      );
+      ); //
       await page?.click(
         "#header > div:nth-child(11) > div.Win-Footer > div > a"
       );
@@ -51,19 +51,19 @@ export default async function V12Published(
       await page?.waitForSelector(
         `#published > table.Block-List > tbody > tr:nth-child(${i}) > td.Cell-InvList-New-Vehicle.First-Column > a:nth-child(1)`
       );
+
+      let link = await page?.$$eval(
+        `#published > table.Block-List > tbody > tr:nth-child(${i}) > td.Cell-InvList-New-Vehicle.First-Column > a:nth-child(1)`,
+        (element: any) => element.map((el: any) => el.getAttribute("href"))
+      );
+      hrefsPublished.push(`https://www.v12software.com/inventory/${link}`);
     } catch (error) {
       break;
     }
-
-    let link = await page?.$$eval(
-      `#published > table.Block-List > tbody > tr:nth-child(${i}) > td.Cell-InvList-New-Vehicle.First-Column > a:nth-child(1)`,
-      (element: any) => element.map((el: any) => el.getAttribute("href"))
-    );
-    hrefsPublished.push(`https://www.v12software.com/inventory/${link}`);
   }
   hrefsPublished = hrefsPublished.flat();
-//   console.log(hrefsPublished);
-  for (let [index,href] of hrefsPublished.entries()) {
+  //   console.log(hrefsPublished);
+  for (let [index, href] of hrefsPublished.entries()) {
     const page: Page = await browser.newPage();
 
     await page.goto(href, { waitUntil: "domcontentloaded" });

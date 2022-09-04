@@ -19,6 +19,7 @@ const initialiseScrappy = async (): Promise<void> => {
   const { provider } = chosenProvider;
   const information = await prompt.checkProvider(chosenProvider);
   const { username, password, link } = information as information;
+  const { fileName } = await promptChoice.fileName();
 
   console.log("Please Wait...");
 
@@ -40,6 +41,7 @@ const initialiseScrappy = async (): Promise<void> => {
     }
     case "autobunny": {
       json = await scrappyAutobunny(browser, link);
+      break;
     }
     default:
       break;
@@ -47,12 +49,14 @@ const initialiseScrappy = async (): Promise<void> => {
   await browser.close();
 
   writeFileSync(
-    `${resolve(`./src/V12/json/${username?.split("@")[0]}`)}.json`,
+    `${resolve(`./src/json/${fileName}`)}.json`,
     JSON.stringify(json),
     "utf8"
   );
   console.log("DONE");
   await browser.close();
+  // let pages = await browser.pages();
+  // await Promise.all(pages.map((page) => page.close()));
 
   return;
 };
