@@ -10,16 +10,13 @@ export default async function v12Login(
   await page.setUserAgent(
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
   );
-  await page.goto(credentials.LOGIN_URL, { waitUntil: "networkidle0" });
+  await page.goto(credentials.V12_LOGIN_URL, { waitUntil: "networkidle0" });
 
   //! type username pass
   //driveoncanada@gmail.com
   //Onlyme2310!
   await page.type("input[type='email']", username || "");
   await page.type("input[type='password']", password || "");
-  await page.screenshot({
-    path: "./src/screenshit.jpg",
-  });
 
   //! submit
   await page.waitForSelector(

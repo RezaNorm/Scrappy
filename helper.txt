@@ -49,4 +49,5 @@ unpulished and published selectors
   #total_unpublished //? Unpublish count selector
   #unpulished > table.Block-List > tbody > tr:nth-child(64) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)
 
-
+//autobunny cars detail page
+#bread-actions > ul > li > ul > li:nth-child(1) > a

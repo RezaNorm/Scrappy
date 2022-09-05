@@ -1,12 +1,16 @@
 import { writeFileSync } from "fs";
-import * as puppeteer from "puppeteer";
+import puppeteer from "puppeteer-extra";
 import { Page, EvaluateFunc, ElementHandle } from "puppeteer";
 import Json from "./interfaces/json.interface";
-import scrappyUnpublished from "./V12/scrappy.V12Panel";
+import scrappyUnpublished from "./V12Panel/scrappy.V12Panel";
 import { resolve } from "path";
 import promptChoice from "./prompt/prompt.choices";
-import scrappyV12 from "./V12/scrappy.V12Panel";
+import scrappyV12 from "./V12Panel/scrappy.V12Panel";
 import { scrappyAutobunny } from "./autobunny/autobunny.scrappy";
+import scrappyAutobunnyPanel from "./autobunnyPanel/scrappy.autobunny";
+import AdblockerPlugin from 'puppeteer-extra-plugin-adblocker'
+import StealthPlugin from 'puppeteer-extra-plugin-stealth'
+
 type information = {
   username?: string;
   password?: string;
@@ -23,8 +27,10 @@ const initialiseScrappy = async (): Promise<void> => {
 
   console.log("Please Wait...");
 
+  puppeteer.use(AdblockerPlugin()).use(StealthPlugin())
+
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -43,6 +49,10 @@ const initialiseScrappy = async (): Promise<void> => {
       json = await scrappyAutobunny(browser, link);
       break;
     }
+    case "autobunnypanel": {
+      json = await scrappyAutobunnyPanel(browser, username, password);
+      break;
+    }
     default:
       break;
   }
@@ -54,7 +64,6 @@ const initialiseScrappy = async (): Promise<void> => {
     "utf8"
   );
   console.log("DONE");
-  await browser.close();
   // let pages = await browser.pages();
   // await Promise.all(pages.map((page) => page.close()));
 

@@ -70,17 +70,21 @@ export const scrappyAutobunny = async (
 
     const images: string[] = [];
 
-    await page.waitForXPath(`//*[@id="carousel"]/div/ul`);
-    const picLink = await page.evaluate(
-      (el: any) =>
-        Array.from(el.children).map((elm: any) =>
-          elm?.getAttribute("data-thumb")
-        ),
-      (
-        await page.$x(`//*[@id="carousel"]/div/ul`)
-      )[0]
-    );
-    for (let pic of picLink) images.push(pic?.replace(/thumb-/g, "pic-"));
+    try {
+      await page.waitForXPath(`//*[@id="carousel"]/div/ul`);
+      const picLink = await page.evaluate(
+        (el: any) =>
+          Array.from(el.children).map((elm: any) =>
+            elm?.getAttribute("data-thumb")
+          ),
+        (
+          await page.$x(`//*[@id="carousel"]/div/ul`)
+        )[0]
+      );
+      for (let pic of picLink) images.push(pic?.replace(/thumb-/g, "pic-"));
+    } catch (error) {
+      images.push();
+    }
 
     let carfax: string | undefined | null;
     try {
@@ -120,8 +124,6 @@ export const scrappyAutobunny = async (
             return element.textContent;
           }
         );
-        console.log(key);
-        console.log(value);
 
         wholeInfo[key || ""] = value || "";
       } catch (error) {
@@ -166,7 +168,7 @@ export const scrappyAutobunny = async (
     wholeInfo["price"] = price;
     wholeInfo["carfax"] = carfax;
     wholeInfo["description"] = description;
-    wholeInfo["imgs"] = images
+    wholeInfo["imgs"] = images;
 
     json.push(wholeInfo);
 
