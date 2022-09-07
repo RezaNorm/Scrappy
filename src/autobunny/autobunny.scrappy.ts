@@ -81,7 +81,7 @@ export const scrappyAutobunny = async (
           await page.$x(`//*[@id="carousel"]/div/ul`)
         )[0]
       );
-      for (let pic of picLink) images.push(pic?.replace(/thumb-/g, "pic-"));
+      for (let pic of picLink) images.push(pic?.replace(/thumb/g, "pic"));
     } catch (error) {
       images.push();
     }
@@ -164,6 +164,33 @@ export const scrappyAutobunny = async (
       });
       return desc.flat().join(" ");
     });
+
+    for (let i = 3; i <= 10; i++) {
+      try {
+        await page.waitForSelector(
+          `body > div.container.main-content-area.main-content-area-page.detailsPage > div > div.row > div > div.panel.panel-default.vehicle-details > div.panel-body > div > div > div.col-md-8 > div:nth-child(${i}) > div > ul`,
+          { timeout: 1000 }
+        );
+        let options = await page?.$$eval(
+          `body > div.container.main-content-area.main-content-area-page.detailsPage > div > div.row > div > div.panel.panel-default.vehicle-details > div.panel-body > div > div > div.col-md-8 > div:nth-child(${i}) > div > ul`,
+          (element: any) => element.map((el: any) => el?.innerHTML)
+        );
+        let option = options[0];
+        option = option
+          .replace(/<li>/g, "$1$")
+          .replace(/<\/li>/g, "")
+          .replace(/\s+/g, " ")
+          .trim()
+          .split("$1$")
+          .filter(Boolean)
+          .map((option: string) => "$1$" + option);
+
+        wholeInfo["options"] = option;
+      } catch (error) {
+        continue;
+      }
+    }
+
     wholeInfo["vin"] = vin;
     wholeInfo["price"] = price;
     wholeInfo["carfax"] = carfax;

@@ -8,8 +8,9 @@ import promptChoice from "./prompt/prompt.choices";
 import scrappyV12 from "./V12Panel/scrappy.V12Panel";
 import { scrappyAutobunny } from "./autobunny/autobunny.scrappy";
 import scrappyAutobunnyPanel from "./autobunnyPanel/scrappy.autobunny";
-import AdblockerPlugin from 'puppeteer-extra-plugin-adblocker'
-import StealthPlugin from 'puppeteer-extra-plugin-stealth'
+import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import { scrappyV12Website } from "./V12Website/scrappy.V12Website";
 
 type information = {
   username?: string;
@@ -27,10 +28,10 @@ const initialiseScrappy = async (): Promise<void> => {
 
   console.log("Please Wait...");
 
-  puppeteer.use(AdblockerPlugin()).use(StealthPlugin())
+  puppeteer.use(AdblockerPlugin()).use(StealthPlugin());
 
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -52,6 +53,9 @@ const initialiseScrappy = async (): Promise<void> => {
     case "autobunnypanel": {
       json = await scrappyAutobunnyPanel(browser, username, password);
       break;
+    }
+    case "v12": {
+      json = await scrappyV12Website(browser, link);
     }
     default:
       break;

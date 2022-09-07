@@ -8,7 +8,13 @@ export default async function autobunnyInventory(
 ): Promise<Json[]> {
   const json: Json[] = [];
 
-  await page?.waitForSelector("#dataTable_length > label > select");
+  await page?.goto("https://dealers.autobunny.ca/client/inventory", {
+    waitUntil: "domcontentloaded",
+  });
+
+  await page?.waitForSelector("#dataTable_length > label > select", {
+    timeout: 3000,
+  });
 
   await page?.select("#dataTable_length > label > select", "-1");
 
@@ -108,8 +114,6 @@ export default async function autobunnyInventory(
                 .pop()
                 .replace(/\s+/g, "")
           );
-          console.log(key);
-          console.log(value);
           wholeData[key] = value;
         }
       } catch (error) {
