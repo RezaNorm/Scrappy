@@ -5,8 +5,11 @@ import Json from "../../interfaces/json.interface";
 export default async function autobunnyInventory(
   page: Page | undefined,
   browser: Browser
-): Promise<Json[]> {
-  const json: Json[] = [];
+): Promise<{ active: Json[]; deactive: Json[] }> {
+  const json: { active: Json[]; deactive: Json[] } = {
+    active: [],
+    deactive: [],
+  };
 
   await page?.goto("https://dealers.autobunny.ca/client/inventory", {
     waitUntil: "domcontentloaded",
@@ -22,7 +25,7 @@ export default async function autobunnyInventory(
     "#bread-actions > ul > li > ul > li:nth-child(1) > a",
     { timeout: 3000 }
   );
-
+  
   const links: (string | null)[] | undefined = await page?.evaluate(() => {
     const link = [
       ...new Set(
@@ -112,7 +115,8 @@ export default async function autobunnyInventory(
                 .map((val: any) => val.trim())[0]
                 .split(":")
                 .pop()
-                .replace(/\s+/g, "")
+                .replace(/\s+/g, " ")
+                .trim()
           );
           wholeData[key] = value;
         }

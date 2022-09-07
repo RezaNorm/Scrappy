@@ -12,9 +12,12 @@ export default async function scrappyAutobunnyPanel(
   username: string | undefined,
   password: string | undefined
 ): Promise<{}> {
-  const json: { inventory: Json[]; sold: Json[] } = {
-    inventory: [],
-    sold: [],
+  const json: {
+    inventory: { active: Json[]; deactive: Json[] };
+    sold: { active: Json[]; deactive: Json[] };
+  } = {
+    inventory: { active: [], deactive: [] },
+    sold: { active: [], deactive: [] },
   };
 
   let page: Page | undefined;
@@ -40,7 +43,6 @@ export default async function scrappyAutobunnyPanel(
     console.log(error);
     console.log("inventory failed");
   }
-
 
   return json;
 }

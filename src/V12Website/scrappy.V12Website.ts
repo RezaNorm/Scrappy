@@ -54,22 +54,70 @@ export const scrappyV12Website = async (
         (element: any) => element.map((el: any) => el?.getAttribute("href"))[0]
       );
       const url = await page.url().replace("/inventory", "");
-      invHrefs.push(`${url.replace(`?pg=${i}`, "")}${link}`);
+      invHrefs.push(`${url.replace(`?pg=${j}`, "")}${link}`);
     }
   }
-  console.log(invHrefs);
 
   for (const link of invHrefs) {
     const page: Page = await browser.newPage();
-    let wholeData: any;
+    let wholeData: any = {};
     await page.goto(link || "", { waitUntil: "domcontentloaded" });
 
     const description = await page?.$$eval(
       `#note > div > div.col.col-12.note_desc_col.finance_active`,
-      (element: any) => element.map((el: any) => el?.innetHTML)[0]
+      (element: any) => element.map((el: any) => el?.innerHTML)[0]
     );
 
-    console.log("description", description);
+    await page.waitForSelector(
+      "#specs > div > div > div.col.col-12.col-sm-12.col-md-12.col-lg-12.specs_part > table > tbody"
+    );
+
+    const specs = await page?.$$eval(
+      `#specs > div > div > div.col.col-12.col-sm-12.col-md-12.col-lg-12.specs_part > table > tbody`,
+      (element: any) => element.map((el: any) => el?.children?.length)
+    );
+
+    for (let i = 1; i <= specs; i++) {
+      let info = await page?.$$eval(
+        `#specs > div > div > div.col.col-12.col-sm-12.col-md-12.col-lg-12.specs_part > table > tbody > tr:nth-child(${i})`,
+        (element: any) => element.map((el: any) => el?.textContent)
+      );
+      info = info[0].replace(":", "").replace(/\s+/g, " ").trim().split(" ");
+      const key = info[0];
+      const value = info[1];
+      wholeData[key] = value;
+    }
+
+    await page.waitForSelector(
+      "#inventory_details > div > div:nth-child(2) > div.inventory_detail_item > div.row > div.col.col-12.col-sm-12.col-md-12.col-lg-8.xs-rmv-padding > div.carousel_vehicle_detail_nav_wrapper.xs-hidden > div > div > div",
+      { timeout: 3000 }
+    );
+    //! Get Images
+    const images: (string | null | undefined)[] = await page.evaluate(() => {
+      const imagesUrl = [
+        ...new Set(
+          Array.from(
+            document.querySelectorAll(
+              "#inventory_details > div > div:nth-child(2) > div.inventory_detail_item > div.row > div.col.col-12.col-sm-12.col-md-12.col-lg-8.xs-rmv-padding > div.carousel_vehicle_detail_nav_wrapper.xs-hidden > div > div > div"
+            )
+          )
+            .map((el) =>
+              Array.from(el.children).map((elm) => {
+                if (parseInt(elm.getAttribute("data-slick-index") || "") >= 0) {
+                  return Array.from(elm.children).map((elem) =>
+                    elem.getAttribute("src")
+                  );
+                }
+              })
+            )
+            .flat(2)
+            .filter(Boolean)
+        ),
+      ];
+
+      return imagesUrl;
+    });
+
     await page.close();
   }
 
