@@ -6,6 +6,7 @@ import { credentials } from "../credentials";
 import autobunnyLogin from "./login/autobunny.login";
 import autobunnyInventory from "./inventory/autobunny.inventory";
 import autobunnySold from "./sold/autobunny.sold";
+import autobunnyCustomers from "./customers/autobunny.customers";
 
 export default async function scrappyAutobunnyPanel(
   browser: Browser,
@@ -15,9 +16,11 @@ export default async function scrappyAutobunnyPanel(
   const json: {
     inventory: { active: Json[]; deactive: Json[] };
     sold: { active: Json[]; deactive: Json[] };
+    customers: Object[];
   } = {
     inventory: { active: [], deactive: [] },
     sold: { active: [], deactive: [] },
+    customers: [],
   };
 
   let page: Page | undefined;
@@ -29,20 +32,25 @@ export default async function scrappyAutobunnyPanel(
     console.log(error);
     console.log("Login Failed");
   }
-  //! invntory
+  // //! invntory
+  // try {
+  //   json.inventory = await autobunnyInventory(page, browser);
+  // } catch (error) {
+  //   console.log(error);
+  //   console.log("inventory failed");
+  // } //
+  // //! sold inventory
+  // try {
+  //   json.sold = await autobunnySold(page, browser);
+  // } catch (error) {
+  //   console.log(error);
+  //   console.log("inventory failed");
+  // }
   try {
-    json.inventory = await autobunnyInventory(page, browser);
+    json.customers = await autobunnyCustomers(page, browser);
   } catch (error) {
     console.log(error);
-    console.log("inventory failed");
+    console.log("customers failed");
   }
-  //! sold inventory
-  try {
-    json.sold = await autobunnySold(page, browser);
-  } catch (error) {
-    console.log(error);
-    console.log("inventory failed");
-  }
-
   return json;
 }

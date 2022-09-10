@@ -5,8 +5,8 @@ import Json from "../../interfaces/json.interface";
 export default async function autobunnySold(
   page: Page | undefined,
   browser: Browser
-): Promise<Json[]> {
-  const json: Json[] = [];
+): Promise<{ active: Json[], deactive: Json[] }> {
+  const json:{ active: Json[], deactive: Json[] } = { active: [], deactive: [] }
 
   await page?.goto("https://dealers.autobunny.ca/client/deals", {
     waitUntil: "domcontentloaded",
@@ -167,7 +167,7 @@ export default async function autobunnySold(
     //#Photo > fieldset > div > ul
     console.log(wholeData);
 
-    json.push(wholeData);
+    json.active.push(wholeData);
     await page.close();
   }
   await page?.close();

@@ -6,7 +6,7 @@ import scrappyUnpublished from "./V12Panel/scrappy.V12Panel";
 import { resolve } from "path";
 import promptChoice from "./prompt/prompt.choices";
 import scrappyV12 from "./V12Panel/scrappy.V12Panel";
-import { scrappyAutobunny } from "./autobunny/autobunny.scrappy";
+import { scrappyAutobunny } from "./autobunny/autobunny.website";
 import scrappyAutobunnyPanel from "./autobunnyPanel/scrappy.autobunny";
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";

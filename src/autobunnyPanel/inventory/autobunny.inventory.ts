@@ -99,7 +99,7 @@ export default async function autobunnyInventory(
           await page?.waitForSelector(
             `#info > div:nth-child(${i}) > div:nth-child(${j}) > div > label`,
             { timeout: 3000 }
-          );
+          ); //#personalformation > div:nth-child(2) > div:nth-child(1) > div > div > label
           const key = await page?.$$eval(
             `#info > div:nth-child(${i}) > div:nth-child(${j}) > div > label`,
             (element: any) =>
@@ -133,7 +133,7 @@ export default async function autobunnyInventory(
 
     wholeData["description"] = description[0];
 
-    json.push(wholeData);
+    json.active.push(wholeData);
     await page.close();
   }
 

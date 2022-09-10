@@ -38,7 +38,8 @@ export const scrappyAutobunny = async (
   for (let i = 3; i <= +invCount!; i++) {
     try {
       await page.waitForXPath(
-        `//*[@id="main"]/div/div[2]/div/div/div/div[${i}]/div/div[2]/div/div[2]/span[1]/span/a[1]`
+        `//*[@id="main"]/div/div[2]/div/div/div/div[${i}]/div/div[2]/div/div[2]/span[1]/span/a[1]`,
+        { timeout: 3000 }
       );
       const link = await page.evaluate(
         (el: any) => el?.getAttribute("href"),
@@ -71,7 +72,7 @@ export const scrappyAutobunny = async (
     const images: string[] = [];
 
     try {
-      await page.waitForXPath(`//*[@id="carousel"]/div/ul`);
+      await page.waitForXPath(`//*[@id="carousel"]/div/ul`, { timeout: 3000 });
       const picLink = await page.evaluate(
         (el: any) =>
           Array.from(el.children).map((elm: any) =>
@@ -135,7 +136,8 @@ export const scrappyAutobunny = async (
     let price: string | undefined | null;
     try {
       await page.waitForSelector(
-        "body > div.container.main-content-area.main-content-area-page.detailsPage > div > div.row > div > div.panel.panel-default.vehicle-details > div.panel-heading > div > div > div.col-md-4.detailsInfo > div > span.PriceValue > span"
+        "body > div.container.main-content-area.main-content-area-page.detailsPage > div > div.row > div > div.panel.panel-default.vehicle-details > div.panel-heading > div > div > div.col-md-4.detailsInfo > div > span.PriceValue > span",
+        { timeout: 3000 }
       );
 
       vin = await page.$eval(
@@ -150,9 +152,23 @@ export const scrappyAutobunny = async (
           return element?.getAttribute("data-cg-price");
         }
       );
+
+      if (!price) {
+        price = await page.$eval(".PriceValue", (element: any) => {
+          return element?.textContent?.replace(/\D/g, "");
+        });
+      }
     } catch (error) {
-      vin = null;
-      price = null;
+      try {
+        if (!price) {
+          await page.waitForSelector(".PriceValue", { timeout: 3000 });
+          price = await page.$eval(".PriceValue", (element: any) => {
+            return element?.textContent?.replace(/\D/g, "");
+          });
+        }
+      } catch (error) {
+        price = null;
+      }
     }
     const description: string = await page.evaluate(() => {
       const desc = Array.from(
@@ -165,11 +181,11 @@ export const scrappyAutobunny = async (
       return desc.flat().join(" ");
     });
 
-    for (let i = 3; i <= 10; i++) {
+    for (let i = 5; i <= 9; i++) {
       try {
         await page.waitForSelector(
           `body > div.container.main-content-area.main-content-area-page.detailsPage > div > div.row > div > div.panel.panel-default.vehicle-details > div.panel-body > div > div > div.col-md-8 > div:nth-child(${i}) > div > ul`,
-          { timeout: 1000 }
+          { timeout: 500 }
         );
         let options = await page?.$$eval(
           `body > div.container.main-content-area.main-content-area-page.detailsPage > div > div.row > div > div.panel.panel-default.vehicle-details > div.panel-body > div > div > div.col-md-8 > div:nth-child(${i}) > div > ul`,
