@@ -5,9 +5,9 @@ export const scrappyAutobunny = async (
   link: string | undefined
 ): Promise<{}> => {
   const page: Page = await browser.newPage();
-  await page.setUserAgent(
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
-  );
+  // await page.setUserAgent(
+  //   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36"
+  // );
 
   const json: Json[] = [];
   let invHrefs: string[] = [];
@@ -21,7 +21,7 @@ export const scrappyAutobunny = async (
       await page?.$x(`//*[@id="main"]/div/div[1]/div/h4`)
     )[0]
   );
-  console.log("all inv", invCount);
+  console.log("invntory count", invCount);
   //*[@id="main"]/div/div[2]/div/div/div/div[3]/div/div[2]/div/div[2]/span[1]/span/a[1]
   //*[@id="main"]/div/div[2]/div/div/div/div[52]/div/div[2]/div/div[2]/span[1]/span/a[1]
   const vehicleCount = await page.evaluate(() => {

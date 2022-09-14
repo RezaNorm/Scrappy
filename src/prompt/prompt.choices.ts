@@ -22,6 +22,10 @@ export default class promptChoice {
             name: "v12panel",
             message: "V12 Panel",
           },
+          {
+            name: "zop",
+            message: "zop",
+          },
         ],
       },
     ]);
@@ -32,7 +36,7 @@ export default class promptChoice {
   }): Promise<object | undefined> {
     const chosenProvider: string = provider["provider"];
     console.log(chosenProvider);
-    if (chosenProvider === "v12" || chosenProvider === "autobunny") {
+    if (chosenProvider === "v12" || chosenProvider === "autobunny" || chosenProvider === "zop") {
       return await prompt([
         {
           type: "input",

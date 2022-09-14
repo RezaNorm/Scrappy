@@ -11,6 +11,7 @@ import scrappyAutobunnyPanel from "./autobunnyPanel/scrappy.autobunny";
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { scrappyV12Website } from "./V12Website/scrappy.V12Website";
+import { scrappyZop } from "./zop/zop.scrappy";
 
 type information = {
   username?: string;
@@ -31,7 +32,7 @@ const initialiseScrappy = async (): Promise<void> => {
   puppeteer.use(AdblockerPlugin()).use(StealthPlugin());
 
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -56,6 +57,10 @@ const initialiseScrappy = async (): Promise<void> => {
     }
     case "v12": {
       json = await scrappyV12Website(browser, link);
+      break;
+    }
+    case "zop": {
+      json = await scrappyZop(browser, link);
     }
     default:
       break;

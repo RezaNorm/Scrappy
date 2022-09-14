@@ -25,7 +25,8 @@ export default async function autobunnyInventory(
     "#bread-actions > ul > li > ul > li:nth-child(1) > a",
     { timeout: 3000 }
   );
-  
+  //.activation
+
   const links: (string | null)[] | undefined = await page?.evaluate(() => {
     const link = [
       ...new Set(

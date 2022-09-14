@@ -33,19 +33,19 @@ export default async function scrappyAutobunnyPanel(
     console.log("Login Failed");
   }
   // //! invntory
-  // try {
-  //   json.inventory = await autobunnyInventory(page, browser);
-  // } catch (error) {
-  //   console.log(error);
-  //   console.log("inventory failed");
-  // } //
+  try {
+    json.inventory = await autobunnyInventory(page, browser);
+  } catch (error) {
+    console.log(error);
+    console.log("inventory failed");
+  } 
   // //! sold inventory
-  // try {
-  //   json.sold = await autobunnySold(page, browser);
-  // } catch (error) {
-  //   console.log(error);
-  //   console.log("inventory failed");
-  // }
+  try {
+    json.sold = await autobunnySold(page, browser);
+  } catch (error) {
+    console.log(error);
+    console.log("inventory failed");
+  }
   try {
     json.customers = await autobunnyCustomers(page, browser);
   } catch (error) {
