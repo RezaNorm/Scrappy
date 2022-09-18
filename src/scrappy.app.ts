@@ -12,6 +12,7 @@ import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { scrappyV12Website } from "./V12Website/scrappy.V12Website";
 import { scrappyZop } from "./zop/zop.scrappy";
+import { scrappyDealerplus } from "./dealerPlus/dealerplus.scrappy";
 
 type information = {
   username?: string;
@@ -60,7 +61,18 @@ const initialiseScrappy = async (): Promise<void> => {
       break;
     }
     case "zop": {
-      json = await scrappyZop(browser, link);
+      try {
+        json = await scrappyZop(browser, link);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    case "dealerplus": {
+      try {
+        json = await scrappyDealerplus(browser, link);
+      } catch (error) {
+        console.log(error);
+      }
     }
     default:
       break;

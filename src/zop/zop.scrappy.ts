@@ -120,8 +120,7 @@ export const scrappyZop = async (
             .map((el: any) => el.textContent)[0]
             .replace(/\s+/g, " ")
             .replace(":", "")
-            .trimStart()
-            .trimEnd()
+            .trim()
       );
       let value = await page?.$$eval(
         `#sidebar-detail1 > div > div:nth-child(3) > ul > li:nth-child(${i})`,
@@ -131,11 +130,9 @@ export const scrappyZop = async (
             .replace(/\s+/g, " ")
             .replace("-", " ")
             .replace(":", "")
-            .trimStart()
-            .trimEnd()
+            .replace(`${key}`, "")
+            .trim()
       );
-
-      value = value.replace(`${key}`, "");
 
       wholeInfo[key || ""] = value || "";
     }

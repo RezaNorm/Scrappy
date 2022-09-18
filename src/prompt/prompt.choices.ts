@@ -24,7 +24,11 @@ export default class promptChoice {
           },
           {
             name: "zop",
-            message: "zop",
+            message: "Zop Dealer",
+          },
+          {
+            name: "dealerplus",
+            message: "Dealer plus",
           },
         ],
       },
@@ -36,7 +40,12 @@ export default class promptChoice {
   }): Promise<object | undefined> {
     const chosenProvider: string = provider["provider"];
     console.log(chosenProvider);
-    if (chosenProvider === "v12" || chosenProvider === "autobunny" || chosenProvider === "zop") {
+    if (
+      chosenProvider === "v12" ||
+      chosenProvider === "autobunny" ||
+      chosenProvider === "zop" ||
+      chosenProvider === "dealerplus"
+    ) {
       return await prompt([
         {
           type: "input",
