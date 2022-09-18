@@ -132,6 +132,7 @@ export const scrappyZop = async (
             .replace("-", " ")
             .replace(":", "")
             .trimStart()
+            .trimEnd()
       );
 
       value = value.replace(`${key}`, "");
