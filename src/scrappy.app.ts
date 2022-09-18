@@ -75,8 +75,6 @@ const initialiseScrappy = async (): Promise<void> => {
   console.log("DONE");
   // let pages = await browser.pages();
   // await Promise.all(pages.map((page) => page.close()));
-
-  return;
 };
 
 (async () => await initialiseScrappy())();
