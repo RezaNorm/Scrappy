@@ -26,33 +26,47 @@ export default async function autobunnySold(
   await page?.select("#dataTable_length > label > select", `${count}`);
 
   for (let i = 1; i <= count; i++) {
-    await page?.waitForSelector(
-      `#dataTable > tbody > tr:nth-child(${i}) > td.yc-column-2.yc-column-img.yc-tooltip > span > a`
-    );
+    try {
+      await page?.waitForSelector(
+        `#dataTable > tbody > tr:nth-child(${i}) > td.yc-column-2.yc-column-img.yc-tooltip > span > a`
+      );
+    } catch (error) {
+      try {
+        continue;
+      } catch (error) {
+        break;
+      }
+    }
+
     const links = await page?.$$eval(
       `#dataTable > tbody > tr:nth-child(${i}) > td.yc-column-2.yc-column-img.yc-tooltip > span > a`,
       (element: any) => element.map((el: any) => el?.getAttribute("href"))[0]
     );
-    const id = links.replace(/\D/g, "");
+    const id = links?.replace(/\D/g, "");
 
     const activeStatus = await page?.$$eval(
       `#active-${id} > i`,
       (element: any) => element.map((el: any) => el?.getAttribute("class"))[0]
     );
-
-    if (activeStatus.includes("green")) hrefs.active.push(links);
-    if (activeStatus.includes("danger")) hrefs.deactive.push(links);
+    console.log("active status", activeStatus);
+    if (activeStatus?.includes("green")) hrefs.active.push(links);
+    if (activeStatus?.includes("danger")) hrefs.deactive.push(links);
 
     const nextbutton = await page?.$$eval(
       `#dataTable_next`,
       (element: any) => element.map((el: any) => el?.getAttribute("class"))[0]
     );
-    if (!nextbutton.includes("disabled"))
-      await page?.click("#dataTable_next > a");
-    else break;
+    if (!nextbutton.includes("disabled") && i === count) {
+      const button = await page?.$("#dataTable_next > a");
+      await button?.evaluate((b: any) => b.click());
+      i = 0;
+      continue;
+    } else if (nextbutton.includes("disabled")) break;
   }
 
-  console.log("sold active length",hrefs.active.length)
+  console.log("sold active length", hrefs.active.length);
+  console.log("sold deactive length", hrefs.deactive.length);
+
   for (const link of hrefs.active) {
     const page: Page = await browser.newPage();
     const wholeData: any = {};
@@ -169,7 +183,6 @@ export default async function autobunnySold(
     await page.close();
   }
 
-  console.log("sold deactive length",hrefs.deactive.length)
   for (const link of hrefs.deactive) {
     const page: Page = await browser.newPage();
     const wholeData: any = {};

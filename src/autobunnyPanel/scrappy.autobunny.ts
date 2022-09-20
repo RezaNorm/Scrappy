@@ -33,13 +33,13 @@ export default async function scrappyAutobunnyPanel(
     console.log("Login Failed");
   }
   //! invntory
-  try {
-    console.log("getting inventory");
-    json.inventory = await autobunnyInventory(page, browser);
-  } catch (error) {
-    console.log(error);
-    console.log("inventory failed");
-  }
+  // try {
+  //   console.log("getting inventory");
+  //   json.inventory = await autobunnyInventory(page, browser);
+  // } catch (error) {
+  //   console.log(error);
+  //   console.log("inventory failed");
+  // }
   //! sold inventory
   try {
     console.log("getting sold inventory");

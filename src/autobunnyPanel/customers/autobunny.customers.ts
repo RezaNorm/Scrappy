@@ -26,9 +26,19 @@ export default async function autobunnyCustomers(
       `#dataTable > tbody > tr:nth-child(${i}) > td.no-sort.no-click.bread-actions > ul > li > ul > li:nth-child(1) > a`,
       (element: any) => element.map((el: any) => el?.getAttribute("href"))[0]
     );
-    console.log(link);
     hrefs.push(link);
+    const nextbutton = await page?.$$eval(
+      `#dataTable_next`,
+      (element: any) => element.map((el: any) => el?.getAttribute("class"))[0]
+    );
+    if (!nextbutton.includes("disabled")) {
+      await page?.click("#dataTable_next > a");
+      i = 0;
+      continue;
+    } else break;
   }
+
+  console.log("cusotmers length", hrefs.length);
 
   for (const link of hrefs!) {
     const page: Page = await browser.newPage();
