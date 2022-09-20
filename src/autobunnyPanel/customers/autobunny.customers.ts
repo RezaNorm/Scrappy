@@ -68,7 +68,7 @@ export default async function autobunnyCustomers(
       }
     }
 
-    console.log(wholeData);
+    // console.log(wholeData);
     json.push(wholeData);
     await page?.close();
   }

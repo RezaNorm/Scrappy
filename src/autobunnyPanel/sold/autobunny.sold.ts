@@ -52,6 +52,7 @@ export default async function autobunnySold(
     else break;
   }
 
+  console.log("sold active length",hrefs.active.length)
   for (const link of hrefs.active) {
     const page: Page = await browser.newPage();
     const wholeData: any = {};
@@ -167,6 +168,8 @@ export default async function autobunnySold(
     json.active.push(wholeData);
     await page.close();
   }
+
+  console.log("sold deactive length",hrefs.deactive.length)
   for (const link of hrefs.deactive) {
     const page: Page = await browser.newPage();
     const wholeData: any = {};
