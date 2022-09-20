@@ -38,7 +38,7 @@ export default async function scrappyAutobunnyPanel(
   } catch (error) {
     console.log(error);
     console.log("inventory failed");
-  } 
+  }
   // //! sold inventory
   try {
     json.sold = await autobunnySold(page, browser);

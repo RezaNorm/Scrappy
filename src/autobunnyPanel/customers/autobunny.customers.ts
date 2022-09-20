@@ -7,35 +7,30 @@ export default async function autobunnyCustomers(
   browser: Browser
 ): Promise<Object[]> {
   const json: Object[] = [];
-  await page?.goto("https://dealers.autobunny.ca/client/customers", {
+  await page?.goto(`https://dealers.autobunny.ca/client/customers`, {
     waitUntil: "domcontentloaded",
   });
 
+  const hrefs = [];
+
+  let count = 100;
+
   await page?.waitForSelector("#dataTable_length > label > select");
-  await page?.select("#dataTable_length > label > select", "-1");
+  await page?.select("#dataTable_length > label > select", `${count}`);
 
-  await page?.waitForSelector(
-    "#bread-actions > ul > li > ul > li:nth-child(1) > a",
-    { timeout: 3000 }
-  );
+  for (let i = 1; i <= count; i++) {
+    await page?.waitForSelector(
+      `#dataTable > tbody > tr:nth-child(${i}) > td.no-sort.no-click.bread-actions > ul > li > ul > li:nth-child(1) > a`
+    );
+    const link = await page?.$$eval(
+      `#dataTable > tbody > tr:nth-child(${i}) > td.no-sort.no-click.bread-actions > ul > li > ul > li:nth-child(1) > a`,
+      (element: any) => element.map((el: any) => el?.getAttribute("href"))[0]
+    );
+    console.log(link);
+    hrefs.push(link);
+  }
 
-  const links: (string | null)[] | undefined = await page?.evaluate(() => {
-    const link = [
-      ...new Set(
-        Array.from(
-          document.querySelectorAll(
-            "#bread-actions > ul > li > ul > li:nth-child(1) > a"
-          )
-        )
-          .map((el) => el.getAttribute("href"))
-          .flat()
-          .filter(Boolean)
-      ),
-    ];
-
-    return link;
-  });
-  for (const link of links!) {
+  for (const link of hrefs!) {
     const page: Page = await browser.newPage();
     const wholeData: any = {};
     await page.goto(link || "", { waitUntil: "domcontentloaded" });
@@ -75,9 +70,9 @@ export default async function autobunnyCustomers(
 
     console.log(wholeData);
     json.push(wholeData);
-    await page?.close()
+    await page?.close();
   }
 
-  await page?.close()
+  await page?.close();
   return json;
 }

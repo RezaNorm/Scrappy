@@ -25,7 +25,6 @@ export default async function autobunnyInventory(
     "#bread-actions > ul > li > ul > li:nth-child(1) > a",
     { timeout: 3000 }
   );
-  //.activation
 
   const links: (string | null)[] | undefined = await page?.evaluate(() => {
     const link = [
@@ -125,6 +124,28 @@ export default async function autobunnyInventory(
         break;
       }
     }
+
+    let options;
+    try {
+      await page.waitForSelector(`#options > div > div > div`, {
+        timeout: 500,
+      });
+      options = await page?.$$eval(
+        `#options > div > div > div`,
+        (element: any) => element.map((el: any) => el?.innerHTML)
+      );
+    } catch (error) {
+      options = null;
+    }
+
+    options = options[0]
+      .replace(/\s+/g, "")
+      .trim()
+      .split("-")
+      .filter(Boolean)
+      .map((op: string) => `$1$` + op);
+
+    wholeData["options"] = options;
 
     //! Get Comment
     const description = await page?.$$eval(
