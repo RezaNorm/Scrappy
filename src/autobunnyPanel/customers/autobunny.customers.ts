@@ -32,7 +32,8 @@ export default async function autobunnyCustomers(
       (element: any) => element.map((el: any) => el?.getAttribute("class"))[0]
     );
     if (!nextbutton.includes("disabled")) {
-      await page?.click("#dataTable_next > a");
+      const button = await page?.$("#dataTable_next > a");
+      await button?.evaluate((b: any) => b.click());
       i = 0;
       continue;
     } else break;
