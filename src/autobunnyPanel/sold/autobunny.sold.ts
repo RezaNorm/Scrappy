@@ -453,6 +453,5 @@ export default async function autobunnySold(
   //   json.active.push(wholeData);
   //   await page.close();
   // }
-  await page?.close();
   return json;
 }

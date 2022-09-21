@@ -8,7 +8,7 @@ export default async function autobunnyCustomers(
 ): Promise<Object[]> {
   const json: Object[] = [];
   await page?.goto(`https://dealers.autobunny.ca/client/customers`, {
-    waitUntil: "domcontentloaded",
+    waitUntil: "networkidle2",
   });
 
   const hrefs = [];
@@ -19,24 +19,30 @@ export default async function autobunnyCustomers(
   await page?.select("#dataTable_length > label > select", `${count}`);
 
   for (let i = 1; i <= count; i++) {
-    await page?.waitForSelector(
-      `#dataTable > tbody > tr:nth-child(${i}) > td.no-sort.no-click.bread-actions > ul > li > ul > li:nth-child(1) > a`
-    );
-    const link = await page?.$$eval(
-      `#dataTable > tbody > tr:nth-child(${i}) > td.no-sort.no-click.bread-actions > ul > li > ul > li:nth-child(1) > a`,
-      (element: any) => element.map((el: any) => el?.getAttribute("href"))[0]
-    );
-    hrefs.push(link);
+    try {
+      await page?.waitForSelector(
+        `#dataTable > tbody > tr:nth-child(${i}) > td.no-sort.no-click.bread-actions > ul > li > ul > li:nth-child(1) > a`
+      );
+      const link = await page?.$$eval(
+        `#dataTable > tbody > tr:nth-child(${i}) > td.no-sort.no-click.bread-actions > ul > li > ul > li:nth-child(1) > a`,
+        (element: any) => element.map((el: any) => el?.getAttribute("href"))[0]
+      );
+      if (link) hrefs.push(link);
+    } catch (error) {
+      continue;
+    }
+
     const nextbutton = await page?.$$eval(
       `#dataTable_next`,
       (element: any) => element.map((el: any) => el?.getAttribute("class"))[0]
     );
-    if (!nextbutton.includes("disabled")) {
+    if (!nextbutton.includes("disabled") && i === count) {
       const button = await page?.$("#dataTable_next > a");
       await button?.evaluate((b: any) => b.click());
+      await page?.waitForNetworkIdle()
       i = 0;
       continue;
-    } else break;
+    }
   }
 
   console.log("cusotmers length", hrefs.length);
