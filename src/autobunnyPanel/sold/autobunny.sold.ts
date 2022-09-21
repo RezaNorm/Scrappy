@@ -163,7 +163,7 @@ export default async function autobunnySold(
     }
 
     options = options[0]
-      .replace(/\s+/g, "")
+      .replace(/\s+/g, " ")
       .trim()
       .split("-")
       .filter(Boolean)
@@ -279,7 +279,7 @@ export default async function autobunnySold(
     }
 
     options = options[0]
-      .replace(/\s+/g, "")
+      .replace(/\s+/g, " ")
       .trim()
       .split("-")
       .filter(Boolean)
