@@ -99,12 +99,12 @@ export default async function autobunnyCustomers(
           break;
         }
       }
+      json.push(wholeData);
     } catch (error) {
       continue;
     }
 
     // console.log(wholeData);
-    json.push(wholeData);
     await page?.close();
   }
 
