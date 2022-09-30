@@ -19,9 +19,16 @@ export default async function autobunnyCustomers(
   await page?.select("#dataTable_length > label > select", `${count}`);
 
   for (let i = 1; i <= count; i++) {
+    // await page?.waitForSelector(`#dataTable_next`)
+    const nextbutton = await page?.$$eval(
+      `#dataTable_next`,
+      (element: any) => element.map((el: any) => el?.getAttribute("class"))[0]
+    );
+
     try {
       await page?.waitForSelector(
-        `#dataTable > tbody > tr:nth-child(${i}) > td.no-sort.no-click.bread-actions > ul > li > ul > li:nth-child(1) > a`
+        `#dataTable > tbody > tr:nth-child(${i}) > td.no-sort.no-click.bread-actions > ul > li > ul > li:nth-child(1) > a`,
+        { timeout :100 }
       );
       const link = await page?.$$eval(
         `#dataTable > tbody > tr:nth-child(${i}) > td.no-sort.no-click.bread-actions > ul > li > ul > li:nth-child(1) > a`,
@@ -32,17 +39,14 @@ export default async function autobunnyCustomers(
       continue;
     }
 
-    const nextbutton = await page?.$$eval(
-      `#dataTable_next`,
-      (element: any) => element.map((el: any) => el?.getAttribute("class"))[0]
-    );
-    if (!nextbutton.includes("disabled") && i === count) {
+    if (!nextbutton?.includes("disabled") && i === count) {
       const button = await page?.$("#dataTable_next > a");
       await button?.evaluate((b: any) => b.click());
-      await page?.waitForNetworkIdle()
+      // await page?.waitForNetworkIdle()
       i = 0;
+      console.log(i);
       continue;
-    }
+    } else if (nextbutton?.includes("disabled")) break;
   }
 
   console.log("cusotmers length", hrefs.length);
@@ -50,39 +54,53 @@ export default async function autobunnyCustomers(
   for (const link of hrefs!) {
     const page: Page = await browser.newPage();
     const wholeData: any = {};
-    await page.goto(link || "", { waitUntil: "domcontentloaded" });
+
+    try {
+      console.log(link);
+      await page.goto(link || "", { waitUntil: "domcontentloaded" });
+    } catch (error) {
+      continue;
+    }
 
     //! Get Personal Info
-    for (let i = 1; i <= 13; i++) {
-      try {
-        for (let j = 1; j <= 2; j++) {
-          await page?.waitForSelector(
-            `#personalformation > div:nth-child(${i}) > div:nth-child(${j}) > div > div > label`,
-            { timeout: 3000 }
-          ); //
-          const key = await page?.$$eval(
-            `#personalformation > div:nth-child(${i}) > div:nth-child(${j}) > div > div > label`,
-            (element: any) =>
-              element.map((el: any) =>
-                el?.textContent?.replace(":", "").trim()
-              )[0]
-          );
-          const value = await page?.$$eval(
-            `#personalformation > div:nth-child(${i}) > div:nth-child(${j}) > div > div`,
-            (element: any) =>
-              element
-                .map((el: any) => el?.textContent)
-                .map((val: any) => val.trim())[0]
-                .split(":")
-                .pop()
-                .replace(/\s+/g, " ")
-                .trim()
-          );
-          wholeData[key] = value;
+    try {
+      for (let i = 1; i <= 13; i++) {
+        try {
+          for (let j = 1; j <= 2; j++) {
+            try {
+              await page?.waitForSelector(
+                `#personalformation > div:nth-child(${i}) > div:nth-child(${j}) > div > div > label`,
+                { timeout : 100}
+              ); //
+            } catch (error) {
+              continue;
+            }
+            const key = await page?.$$eval(
+              `#personalformation > div:nth-child(${i}) > div:nth-child(${j}) > div > div > label`,
+              (element: any) =>
+                element.map((el: any) =>
+                  el?.textContent?.replace(":", "").trim()
+                )[0]
+            );
+            const value = await page?.$$eval(
+              `#personalformation > div:nth-child(${i}) > div:nth-child(${j}) > div > div`,
+              (element: any) =>
+                element
+                  .map((el: any) => el?.textContent)
+                  .map((val: any) => val.trim())[0]
+                  .split(":")
+                  .pop()
+                  .replace(/\s+/g, " ")
+                  .trim()
+            );
+            wholeData[key] = value;
+          }
+        } catch (error) {
+          break;
         }
-      } catch (error) {
-        break;
       }
+    } catch (error) {
+      continue;
     }
 
     // console.log(wholeData);
