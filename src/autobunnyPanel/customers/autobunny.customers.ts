@@ -42,9 +42,7 @@ export default async function autobunnyCustomers(
     if (!nextbutton?.includes("disabled") && i === count) {
       const button = await page?.$("#dataTable_next > a");
       await button?.evaluate((b: any) => b.click());
-      // await page?.waitForNetworkIdle()
       i = 0;
-      console.log(i);
       continue;
     } else if (nextbutton?.includes("disabled")) break;
   }
@@ -70,7 +68,7 @@ export default async function autobunnyCustomers(
             try {
               await page?.waitForSelector(
                 `#personalformation > div:nth-child(${i}) > div:nth-child(${j}) > div > div > label`,
-                { timeout : 100}
+                { timeout : 100 }
               ); //
             } catch (error) {
               continue;
@@ -99,6 +97,7 @@ export default async function autobunnyCustomers(
           break;
         }
       }
+      console.log(wholeData)
       json.push(wholeData);
     } catch (error) {
       continue;
