@@ -28,6 +28,7 @@ export const scrappyV12Website = async (
     const url = await page.url();
     await page.goto(`${url.replace(`?pg=${j - 1}`, "")}?pg=${j}`, {
       waitUntil: "domcontentloaded",
+      timeout:0
     });
     await page.waitForSelector(
       "#inventory-list > div.search_result_wrapper.div_list.listing-layout1 > div > div > ul",
@@ -78,13 +79,20 @@ export const scrappyV12Website = async (
     );
 
     for (let i = 1; i <= specs; i++) {
-      let info = await page?.$$eval(
-        `#specs > div > div > div.col.col-12.col-sm-12.col-md-12.col-lg-12.specs_part > table > tbody > tr:nth-child(${i})`,
+      let key = await page?.$$eval(
+        `#specs > div > div > div.col.col-12.col-sm-12.col-md-12.col-lg-12.specs_part > table > tbody > tr:nth-child(${i}) > td.info-label`,
         (element: any) => element.map((el: any) => el?.textContent)
       );
-      info = info[0].replace(":", "").replace(/\s+/g, " ").trim().split(" ");
-      const key = info[0];
-      const value = info[1];
+
+      let value = await page?.$$eval(
+        `#specs > div > div > div.col.col-12.col-sm-12.col-md-12.col-lg-12.specs_part > table > tbody > tr:nth-child(${i}) > td.info-value`,
+        (element: any) => element.map((el: any) => el?.textContent)
+      );
+
+      //#specs > div > div > div.col.col-12.col-sm-12.col-md-12.col-lg-12.specs_part > table > tbody > tr:nth-child(1) > td.info-label
+      //#specs > div > div > div.col.col-12.col-sm-12.col-md-12.col-lg-12.specs_part > table > tbody > tr:nth-child(1) > td.info-value
+      key = key[0].replace(":", "").replace(/\s+/g, " ").trim();
+      value = value[0].replace(":", "").replace(/\s+/g, " ").trim();
       wholeData[key] = value;
     }
 
@@ -118,8 +126,14 @@ export const scrappyV12Website = async (
       return imagesUrl;
     });
 
+    wholeData["imgs"] = images;
+    wholeData["description"] = description;
+    json.push(wholeData)
+    console.log(wholeData);
+
     await page.close();
   }
 
-  return {};
+  await page?.close()
+  return json;
 };

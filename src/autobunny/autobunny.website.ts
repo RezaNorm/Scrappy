@@ -67,7 +67,7 @@ export const scrappyAutobunny = async (
   for (let href of invHrefs) {
     const page: Page = await browser.newPage();
 
-    await page.goto(href, { waitUntil: "domcontentloaded" });
+    await page.goto(href, { waitUntil: "domcontentloaded", timeout:0 });
 
     const images: string[] = [];
 
