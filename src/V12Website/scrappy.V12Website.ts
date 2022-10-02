@@ -78,6 +78,11 @@ export const scrappyV12Website = async (
       (element: any) => element.map((el: any) => el?.children?.length)
     );
 
+    const price = await page?.$$eval(
+      `#inventory_details > div > div:nth-child(2) > div.inventory_detail_item > div.header_title > div > div.col.col-12.col-sm-12.col-md-12.col-lg-4.rmv-padding.xs-hidden > div > h2`,
+      (element: any) => element.map((el: any) => el?.textContent.replace(/\D/g,""))
+    );
+
     for (let i = 1; i <= specs; i++) {
       let key = await page?.$$eval(
         `#specs > div > div > div.col.col-12.col-sm-12.col-md-12.col-lg-12.specs_part > table > tbody > tr:nth-child(${i}) > td.info-label`,
@@ -89,8 +94,6 @@ export const scrappyV12Website = async (
         (element: any) => element.map((el: any) => el?.textContent)
       );
 
-      //#specs > div > div > div.col.col-12.col-sm-12.col-md-12.col-lg-12.specs_part > table > tbody > tr:nth-child(1) > td.info-label
-      //#specs > div > div > div.col.col-12.col-sm-12.col-md-12.col-lg-12.specs_part > table > tbody > tr:nth-child(1) > td.info-value
       key = key[0].replace(":", "").replace(/\s+/g, " ").trim();
       value = value[0].replace(":", "").replace(/\s+/g, " ").trim();
       wholeData[key] = value;

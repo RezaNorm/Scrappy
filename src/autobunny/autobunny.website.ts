@@ -140,11 +140,9 @@ export const scrappyAutobunny = async (
         { timeout: 3000 }
       );
 
-      vin = await page.$eval(
+      vin = await page.$$eval(
         "body > div.container.main-content-area.main-content-area-page.detailsPage > div > div.row > div > div.panel.panel-default.vehicle-details > div.panel-heading > div > div > div.col-md-4.detailsInfo > div > span.PriceValue > span",
-        (element: any) => {
-          return element?.getAttribute("data-cg-vin");
-        }
+        (element: any) => element.map((el: any) => el?.getAttribute("data-cg-vin"))[0]
       );
       price = await page.$eval(
         "body > div.container.main-content-area.main-content-area-page.detailsPage > div > div.row > div > div.panel.panel-default.vehicle-details > div.panel-heading > div > div > div.col-md-4.detailsInfo > div > span.PriceValue > span",
