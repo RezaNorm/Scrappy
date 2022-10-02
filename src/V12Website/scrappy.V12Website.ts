@@ -131,7 +131,7 @@ export const scrappyV12Website = async (
 
     wholeData["imgs"] = images;
     wholeData["description"] = description;
-    wholeData["price"] = price
+    wholeData["price"] = price;
     json.push(wholeData)
     console.log(wholeData);
 

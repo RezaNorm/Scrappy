@@ -24,7 +24,7 @@ const initialiseScrappy = async (): Promise<void> => {
     timeout: 0,
   });
 
-  for (let i = 0; i <= 6; i++)
+  for (let i = 0; i <= 7; i++)
     await scrollPageToBottom(page, { size: 500});
 
   for (let i = 1; i <= 107; i++) {
