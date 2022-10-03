@@ -142,8 +142,9 @@ export const scrappyAutobunny = async (
 
       vin = await page.$$eval(
         "body > div.container.main-content-area.main-content-area-page.detailsPage > div > div.row > div > div.panel.panel-default.vehicle-details > div.panel-heading > div > div > div.col-md-4.detailsInfo > div > span.PriceValue > span",
-        (element: any) => element.map((el: any) => el?.getAttribute("data-cg-vin"))[0]
+        (element: any) => element.map((el: any) => el?.getAttribute("data-cg-vin"))[1]
       );
+      console.log("vin num",vin);
       price = await page.$eval(
         "body > div.container.main-content-area.main-content-area-page.detailsPage > div > div.row > div > div.panel.panel-default.vehicle-details > div.panel-heading > div > div > div.col-md-4.detailsInfo > div > span.PriceValue > span",
         (element: any) => {

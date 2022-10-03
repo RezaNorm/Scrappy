@@ -3,6 +3,7 @@
 
 import * as puppeteer from "puppeteer";
 import { Page } from "puppeteer";
+import { resolve } from "path";
 import { scrollPageToBottom } from "puppeteer-autoscroll-down";
 import Json from "./interfaces/json.interface";
 import { writeFileSync } from "fs";
@@ -15,6 +16,7 @@ const initialiseScrappy = async (): Promise<void> => {
     headless: false,
   });
 
+  const json: Json[] = [];
   const hrefs = [];
 
   const page: Page = await browser.newPage();
@@ -24,8 +26,7 @@ const initialiseScrappy = async (): Promise<void> => {
     timeout: 0,
   });
 
-  for (let i = 0; i <= 7; i++)
-    await scrollPageToBottom(page, { size: 500});
+  for (let i = 0; i <= 8; i++) await scrollPageToBottom(page, { size: 500 });
 
   for (let i = 1; i <= 107; i++) {
     const links = await page?.$$eval(
@@ -36,5 +37,103 @@ const initialiseScrappy = async (): Promise<void> => {
   }
   console.log(hrefs);
   console.log(hrefs.length);
+
+  for (let href of hrefs!) {
+    const page: Page = await browser.newPage();
+
+    await page.goto(href, { waitUntil: "domcontentloaded", timeout: 0 });
+
+    const wholeData: any = {};
+
+    await page?.waitForSelector(
+      "#vdp-app > div > section > div > div.photo-gallery__buttons-container.photo-gallery__buttons-container--right > div"
+    );
+    await page?.click(
+      "#vdp-app > div > section > div > div.photo-gallery__buttons-container.photo-gallery__buttons-container--right > div"
+    );
+
+    let images: string[] = [];
+
+    let producttype =
+      (await page.$(
+        "#vdp-app > div > section > div > div.photo-gallery__container > div.vgs > div.vgs__gallery > div.vgs__gallery__container"
+      )) || "";
+
+    if (producttype) {
+      images = await page?.$$eval(
+        "#vdp-app > div > section > div > div.photo-gallery__container > div.vgs > div.vgs__gallery > div.vgs__gallery__container",
+        (element: any) =>
+          element.map((el: any) =>
+            Array.from(el?.children).map((e: any) => e?.getAttribute("src"))
+          )
+      );
+    } else {
+      images = await page?.$$eval(
+        "#vdp-app > div > section > div > div.photo-gallery__container > div.vgs > div > img",
+        (element: any) => element.map((el: any) => el?.getAttribute("src"))
+      );
+    }
+
+    wholeData["imgs"] = images?.flat();
+
+    const vin = await page?.$$eval(
+      "#vdp-app > div > div > div.row > div.col-lg-8.col-sm-7.col-xs-12 > div.overview-group > div > span:nth-child(2)",
+      (element: any) => element.map((el: any) => el?.textContent)
+    );
+    wholeData["vin"] = vin[0].replace("VIN: ", "");
+
+    const stock = await page?.$$eval(
+      "#vdp-app > div > div > div.row > div.col-lg-8.col-sm-7.col-xs-12 > div.overview-group > div > span:nth-child(1)",
+      (element: any) => element.map((el: any) => el?.textContent)
+    );
+    wholeData["stock"] = stock[0].replace("Stock #: ", "");
+
+    for (let i = 1; i <= 9; i++) {
+      try {
+        await page?.waitForSelector(
+          `#vdp-app > div > div > div.row > div.col-lg-8.col-sm-7.col-xs-12 > div.details-group > div > ul > li:nth-child(${i}) > div > div > h5`,
+          { timeout: 0 }
+        );
+      } catch (error) {
+        continue;
+      }
+      const key = await page?.$$eval(
+        `#vdp-app > div > div > div.row > div.col-lg-8.col-sm-7.col-xs-12 > div.details-group > div > ul > li:nth-child(${i}) > div > div > h5`,
+        (element: any) => element.map((el: any) => el?.textContent)
+      );
+      const value = await page?.$$eval(
+        `#vdp-app > div > div > div.row > div.col-lg-8.col-sm-7.col-xs-12 > div.details-group > div > ul > li:nth-child(${i}) > div > div > p`,
+        (element: any) => element.map((el: any) => el?.textContent)
+      );
+
+      const price = await page?.$$eval(
+        "#vdp-app > div > div > div.row > div.col-lg-4.col-sm-5.hidden-xs-down > div > div.main-price > div > div.pricing-group__final-price.text-left > div > div > div > span",
+        (element: any) =>
+          element.map((el: any) => el?.textContent.replace(/\D/g, ""))
+      );
+      wholeData["price"] = price[0];
+
+      await page?.click(
+        "#vdp-app > div > div > div.row > div.col-lg-8.col-sm-7.col-xs-12 > div.description-tab.mb-md > p > span"
+      );
+      const description = await page?.$$eval(
+        "#vdp-app > div > div > div.row > div.col-lg-8.col-sm-7.col-xs-12 > div.description-tab.mb-md > p",
+        (element: any) => element.map((el: any) => el?.innerHTML)
+      );
+      wholeData["description"] = description;
+
+      wholeData[key] = value[0];
+    }
+
+    console.log(wholeData);
+
+    await page?.close();
+  }
+  await page?.close();
+  writeFileSync(
+    `${resolve(`./json/montro`)}.json`,
+    JSON.stringify(json),
+    "utf8"
+  );
 };
 (async () => await initialiseScrappy())();
