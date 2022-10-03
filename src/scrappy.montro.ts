@@ -1,5 +1,6 @@
 //body > main > div > div > div.wrapper > div.row > div.col.primary-col > div.row > div:nth-child(1) > div > div.vehicle-card__full-details > div > div.price-block > a
 //body > main > div > div > div.wrapper > div.row > div.col.primary-col > div.row > div:nth-child(2) > div > div.vehicle-card__full-details > div > div.price-block > a
+//https://www.monteroauto.com/vehicles/
 
 import * as puppeteer from "puppeteer";
 import { Page } from "puppeteer";
