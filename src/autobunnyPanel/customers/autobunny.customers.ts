@@ -2,11 +2,19 @@ import * as puppeteer from "puppeteer";
 import { Page, EvaluateFunc, ElementHandle, Browser } from "puppeteer";
 import Json from "../../interfaces/json.interface";
 
+/**
+ * 
+ * @param page 
+ * @param browser 
+ * @returns [{typeof Json}]
+ */
+
 export default async function autobunnyCustomers(
   page: Page | undefined,
   browser: Browser
 ): Promise<Object[]> {
   const json: Object[] = [];
+
   await page?.goto(`https://dealers.autobunny.ca/client/customers`, {
     waitUntil: "networkidle2",
   });

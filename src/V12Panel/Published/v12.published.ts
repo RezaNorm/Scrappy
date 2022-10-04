@@ -19,6 +19,11 @@ export default async function V12Published(
     "#header > div:nth-child(9) > div.Header-Titleless > ul > li:nth-child(2) > a"
   );
 
+  let count = 100;
+
+  await page?.waitForSelector("#perpage");
+  await page?.select("#perpage", `${count}`);
+
   //   const publish_el: puppeteer.ElementHandle<Element> | null | undefined =
   //     await page?.$("#total_published");
   //   const publish: string | undefined = await page?.evaluate(
@@ -35,18 +40,7 @@ export default async function V12Published(
   console.log("publish count", publish);
   let pages = +publish! / 20;
 
-  for (let i = 1; i <= +publish!; i++) {
-    if (i === 21) {
-      await page?.waitForSelector(
-        "#header > div:nth-child(11) > div.Win-Footer > div > a"
-      ); //
-      await page?.click(
-        "#header > div:nth-child(11) > div.Win-Footer > div > a"
-      );
-      i = 0;
-      continue;
-    }
-
+  for (let i = 1; i <= +count!; i++) {
     try {
       await page?.waitForSelector(
         `#published > table.Block-List > tbody > tr:nth-child(${i}) > td.Cell-InvList-New-Vehicle.First-Column > a:nth-child(1)`
@@ -59,6 +53,21 @@ export default async function V12Published(
       hrefsPublished.push(`https://www.v12software.com/inventory/${link}`);
     } catch (error) {
       break;
+    }
+
+    let producttype =
+      (await page?.$(
+        "#header > div:nth-child(11) > div.Win-Footer > div > a"
+      )) || "";
+
+    if (producttype && i === count) {
+      await page?.waitForSelector(
+        "#header > div:nth-child(11) > div.Win-Footer > div > a"
+      );
+
+      await page?.click(
+        "#header > div:nth-child(11) > div.Win-Footer > div > a"
+      );
     }
   }
   hrefsPublished = hrefsPublished.flat();

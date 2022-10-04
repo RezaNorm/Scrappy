@@ -75,7 +75,9 @@ const initialiseScrappy = async (): Promise<void> => {
       );
     }
 
-    wholeData["imgs"] = images?.flat();
+    wholeData["imgs"] = images
+      ?.flat()
+      .map((el) => el?.replace("-1024x786", ""));
 
     const vin = await page?.$$eval(
       "#vdp-app > div > div > div.row > div.col-lg-8.col-sm-7.col-xs-12 > div.overview-group > div > span:nth-child(2)",
@@ -93,7 +95,7 @@ const initialiseScrappy = async (): Promise<void> => {
       try {
         await page?.waitForSelector(
           `#vdp-app > div > div > div.row > div.col-lg-8.col-sm-7.col-xs-12 > div.details-group > div > ul > li:nth-child(${i}) > div > div > h5`,
-          { timeout: 0 }
+          { timeout: 500 }
         );
       } catch (error) {
         continue;
@@ -121,16 +123,17 @@ const initialiseScrappy = async (): Promise<void> => {
         "#vdp-app > div > div > div.row > div.col-lg-8.col-sm-7.col-xs-12 > div.description-tab.mb-md > p",
         (element: any) => element.map((el: any) => el?.innerHTML)
       );
-      wholeData["description"] = description;
+      wholeData["description"] = description[0];
 
       wholeData[key] = value[0];
     }
 
-    console.log(wholeData);
+    json.push(wholeData);
 
     await page?.close();
   }
-  await page?.close();
+  let pages = await browser.pages();
+  await Promise.all(pages.map((page) => page.close()));
   writeFileSync(
     `${resolve(`./json/montro`)}.json`,
     JSON.stringify(json),
