@@ -57,7 +57,6 @@ export default async function V12Customers(
     address = address[0];
     wholeData["address"] = address ? address : "";
 
-    console.log(wholeData);
     json.push(wholeData);
   }
 

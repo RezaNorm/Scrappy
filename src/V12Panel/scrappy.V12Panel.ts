@@ -36,26 +36,26 @@ export default async function scrappyV12(
     console.log("Login Failed");
   }
   //! un-published inv
-  // try {
-  //   json.unpublished = await V12Unpublished(page, browser);
-  //   if (json.unpublished.length) console.log("Unpublished Inv Finished");
-  // } catch (error) {
-  //   console.log("error in unpublished inventory", error);
-  // }
-  // //! click on published
-  // try {
-  //   json.published = await V12Published(page, browser);
-  //   if (json.published.length) console.log("Published Inv Finished");
-  // } catch (error) {
-  //   console.log("error in published inventory", error);
-  // }
-  // //! click on sold
-  // try {
-  //   json.sold = await V12Sold(page, browser);
-  //   if (json.sold.length) console.log("Sold Inv Finished");
-  // } catch (error) {
-  //   console.log("Sold Inv Has error", error);
-  // }
+  try {
+    json.unpublished = await V12Unpublished(page, browser);
+    if (json.unpublished.length) console.log("Unpublished Inv Finished");
+  } catch (error) {
+    console.log("error in unpublished inventory", error);
+  }
+  //! click on published
+  try {
+    json.published = await V12Published(page, browser);
+    if (json.published.length) console.log("Published Inv Finished");
+  } catch (error) {
+    console.log("error in published inventory", error);
+  }
+  //! click on sold
+  try {
+    json.sold = await V12Sold(page, browser);
+    if (json.sold.length) console.log("Sold Inv Finished");
+  } catch (error) {
+    console.log("Sold Inv Has error", error);
+  }
   try {
     json.customers = await V12Customers(page, browser);
     if (json.customers.length) console.log("Sold Inv Finished");
