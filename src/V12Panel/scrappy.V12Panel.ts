@@ -58,7 +58,7 @@ export default async function scrappyV12(
   }
   try {
     json.customers = await V12Customers(page, browser);
-    if (json.customers.length) console.log("Sold Inv Finished");
+    if (json.customers.length) console.log("Customers Finished");
   } catch (error) {
     console.log("customers Has error", error);
   }

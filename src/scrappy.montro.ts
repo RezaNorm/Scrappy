@@ -36,13 +36,25 @@ const initialiseScrappy = async (): Promise<void> => {
     );
     hrefs.push(links);
   }
-  console.log(hrefs);
-  console.log(hrefs.length);
 
   for (let href of hrefs!) {
     const page: Page = await browser.newPage();
 
-    await page.goto(href, { waitUntil: "domcontentloaded", timeout: 0 });
+    if (
+      href ===
+        "https://www.monteroauto.com/vehicles/2017/dodge/grand-caravan/toronto/on/56306692/?sale_class=used" ||
+      href ===
+        "https://www.monteroauto.com/vehicles/2016/dodge/journey/toronto/on/54185401/?sale_class=used"
+    )
+      continue;
+
+    try {
+      await page.goto(href, { waitUntil: "domcontentloaded", timeout: 0 });
+    } catch (error) {
+      continue;
+    }
+
+    console.log(href);
 
     const wholeData: any = {};
 
@@ -76,8 +88,8 @@ const initialiseScrappy = async (): Promise<void> => {
     }
 
     wholeData["imgs"] = images
-      ?.flat()
-      .map((el) => el?.replace("-1024x786", ""));
+      ? images?.flat().map((el) => el?.replace("-1024x786", ""))
+      : [];
 
     const vin = await page?.$$eval(
       "#vdp-app > div > div > div.row > div.col-lg-8.col-sm-7.col-xs-12 > div.overview-group > div > span:nth-child(2)",

@@ -12,6 +12,19 @@ export const scrappyAutobunny = async (
   const json: Json[] = [];
   let invHrefs: string[] = [];
   await page.goto(link || "", { waitUntil: "domcontentloaded" });
+  let count;
+
+  try {
+    await page?.waitForSelector(
+      "#main > div > div:nth-child(2) > div > div > div > div.row.sortingPaging > div.col-sm-4.sortingPagingView > a:nth-child(5)"
+    );
+    await page?.click(
+      "#main > div > div:nth-child(2) > div > div > div > div.row.sortingPaging > div.col-sm-4.sortingPagingView > a:nth-child(5)"
+    );
+    count = 103;
+  } catch (error) {
+    count = 23;
+  }
 
   await page.waitForXPath(`//*[@id="main"]/div/div[1]/div/h4`);
 
@@ -22,36 +35,22 @@ export const scrappyAutobunny = async (
     )[0]
   );
   console.log("invntory count", invCount);
-  //*[@id="main"]/div/div[2]/div/div/div/div[3]/div/div[2]/div/div[2]/span[1]/span/a[1]
-  //*[@id="main"]/div/div[2]/div/div/div/div[52]/div/div[2]/div/div[2]/span[1]/span/a[1]
-  const vehicleCount = await page.evaluate(() => {
-    const count = Array.from(
-      document.querySelectorAll(
-        "#main > div > div:nth-child(2) > div > div > div"
-      )
-    )
-      .map((el) => Array.from(el.children))
-      .flat().length;
 
-    return count;
-  });
-  for (let i = 3; i <= +invCount!; i++) {
+  for (let i = 3; i <= +count!; i++) {
     try {
-      await page.waitForXPath(
-        `//*[@id="main"]/div/div[2]/div/div/div/div[${i}]/div/div[2]/div/div[2]/span[1]/span/a[1]`,
+      await page.waitForSelector(
+        `#main > div > div:nth-child(2) > div > div > div > div:nth-child(${i}) > div > div.col-sm-9.col-md-9 > div > div.col-sm-9.col-xs-8.col-md-9 > div:nth-child(1) > div > a`,
         { timeout: 3000 }
       );
-      const link = await page.evaluate(
-        (el: any) => el?.getAttribute("href"),
-        (
-          await page.$x(
-            `//*[@id="main"]/div/div[2]/div/div/div/div[${i}]/div/div[2]/div/div[2]/span[1]/span/a[1]`
-          )
-        )[0]
+
+      const link = await page?.$$eval(
+        `#main > div > div:nth-child(2) > div > div > div > div:nth-child(${i}) > div > div.col-sm-9.col-md-9 > div > div.col-sm-9.col-xs-8.col-md-9 > div:nth-child(1) > div > a`,
+        (element: any) => element.map((el: any) => el?.getAttribute("href"))
       );
 
       invHrefs.push(link);
     } catch (error) {
+      console.log(i);
       try {
         await page.click(
           `#main > div > div:nth-child(2) > div > div > div > div:nth-child(${i}) > div > div > div > a.next.page-numbers`
@@ -64,10 +63,12 @@ export const scrappyAutobunny = async (
     }
   }
 
+  invHrefs = invHrefs.flat();
+
   for (let href of invHrefs) {
     const page: Page = await browser.newPage();
 
-    await page.goto(href, { waitUntil: "domcontentloaded", timeout:0 });
+    await page.goto(href, { waitUntil: "domcontentloaded", timeout: 0 });
 
     const images: string[] = [];
 
@@ -142,9 +143,10 @@ export const scrappyAutobunny = async (
 
       vin = await page.$$eval(
         "body > div.container.main-content-area.main-content-area-page.detailsPage > div > div.row > div > div.panel.panel-default.vehicle-details > div.panel-heading > div > div > div.col-md-4.detailsInfo > div > span.PriceValue > span",
-        (element: any) => element.map((el: any) => el?.getAttribute("data-cg-vin"))[1]
+        (element: any) =>
+          element.map((el: any) => el?.getAttribute("data-cg-vin"))[1]
       );
-      console.log("vin num",vin);
+      console.log("vin num", vin);
       price = await page.$eval(
         "body > div.container.main-content-area.main-content-area-page.detailsPage > div > div.row > div > div.panel.panel-default.vehicle-details > div.panel-heading > div > div > div.col-md-4.detailsInfo > div > span.PriceValue > span",
         (element: any) => {

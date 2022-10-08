@@ -12,9 +12,9 @@ export const scrappyV12Website = async (
 
   const json: Json[] = [];
   let invHrefs: string[] = [];
-  await page.goto(link || "", { waitUntil: "domcontentloaded" });
+  await page.goto(link || "", { waitUntil: "domcontentloaded", timeout: 0 });
 
-  const pagination = await page.evaluate(() => {
+  let pagination = await page.evaluate(() => {
     const count = Array.from(
       document.querySelectorAll("#inventory-list > div.pagination_wrapper > ul")
     )
@@ -24,11 +24,13 @@ export const scrappyV12Website = async (
     return count;
   });
 
+  if (!pagination) pagination = 2;
+
   for (let j = 1; j <= pagination - 1; j++) {
     const url = await page.url();
     await page.goto(`${url.replace(`?pg=${j - 1}`, "")}?pg=${j}`, {
       waitUntil: "domcontentloaded",
-      timeout:0
+      timeout: 0,
     });
     await page.waitForSelector(
       "#inventory-list > div.search_result_wrapper.div_list.listing-layout1 > div > div > ul",
@@ -69,6 +71,11 @@ export const scrappyV12Website = async (
       (element: any) => element.map((el: any) => el?.innerHTML)[0]
     );
 
+    const vin = await page?.$$eval(
+      `#details-page-vehicle-vin`,
+      (element: any) => element.map((el: any) => el?.getAttribute("value"))[0]
+    );
+
     await page.waitForSelector(
       "#specs > div > div > div.col.col-12.col-sm-12.col-md-12.col-lg-12.specs_part > table > tbody"
     );
@@ -80,7 +87,8 @@ export const scrappyV12Website = async (
 
     const price = await page?.$$eval(
       `#inventory_details > div > div:nth-child(2) > div.inventory_detail_item > div.header_title > div > div.col.col-12.col-sm-12.col-md-12.col-lg-4.rmv-padding.xs-hidden > div > h2`,
-      (element: any) => element.map((el: any) => el?.textContent.replace(/\D/g,""))
+      (element: any) =>
+        element.map((el: any) => el?.textContent.replace(/\D/g, ""))
     );
 
     for (let i = 1; i <= specs; i++) {
@@ -129,15 +137,16 @@ export const scrappyV12Website = async (
       return imagesUrl;
     });
 
-    wholeData["imgs"] = images;
+    wholeData["imgs"] = images[0]?.startsWith("data") ? [] : images;
     wholeData["description"] = description;
-    wholeData["price"] = price;
-    json.push(wholeData)
+    wholeData["price"] = price[0];
+    wholeData["vin"] = vin;
+    json.push(wholeData);
     console.log(wholeData);
 
     await page.close();
   }
 
-  await page?.close()
+  await page?.close();
   return json;
 };

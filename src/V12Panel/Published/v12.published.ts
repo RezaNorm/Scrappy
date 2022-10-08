@@ -19,17 +19,12 @@ export default async function V12Published(
     "#header > div:nth-child(9) > div.Header-Titleless > ul > li:nth-child(2) > a"
   );
 
+  //! show 100 record
   let count = 100;
-
   await page?.waitForSelector("#perpage");
   await page?.select("#perpage", `${count}`);
 
-  //   const publish_el: puppeteer.ElementHandle<Element> | null | undefined =
-  //     await page?.$("#total_published");
-  //   const publish: string | undefined = await page?.evaluate(
-  //     (el) => el?.textContent?.replace(/\D/g, ""),
-  //     publish_el
-  //   );
+  //! find publish count
   await page?.waitForXPath(`//*[@id="header"]/div[5]/div[1]/ul/li[2]/a`);
   const publish = await page?.evaluate(
     (el: any) => el?.textContent.replace(/\D/g, ""),
@@ -38,8 +33,8 @@ export default async function V12Published(
     )[0]
   );
   console.log("publish count", publish);
-  let pages = +publish! / 20;
 
+  //! extract vehicle links one by one
   for (let i = 1; i <= +count!; i++) {
     try {
       await page?.waitForSelector(
@@ -71,7 +66,8 @@ export default async function V12Published(
     }
   }
   hrefsPublished = hrefsPublished.flat();
-  //   console.log(hrefsPublished);
+  
+  //! open links and scrape details one by one 
   for (let [index, href] of hrefsPublished.entries()) {
     const page: Page = await browser.newPage();
 
@@ -277,12 +273,11 @@ export default async function V12Published(
     });
 
     //! Open Photos
-    ////*[@id="vehicleForm"]/div/div[1]/ul/li[3]/a
 
     await page.click(
       "#vehicleForm > div > div.Header-Titleless > ul > li:nth-child(3) > a"
     );
-    //! Get Links
+    //! Get Image Links
     await page.waitForSelector(
       "#header > div.colmask.twocol > div > div > div.col1 > div:nth-child(2) > div.Header-Titleless > ul > li:nth-child(3) > a"
     );
@@ -292,9 +287,6 @@ export default async function V12Published(
         return element.textContent?.replace(/\D/g, "");
       }
     );
-    ////*[@id="0"]/img
-    ////*[@id="21"]/img
-    ////*[@id="4"]/img
 
     const images: string[] = [];
     if (+photoCount!)
