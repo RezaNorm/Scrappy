@@ -64,7 +64,7 @@ export const scrappyAutobunny = async (
   }
 
   invHrefs = invHrefs.flat();
-
+  // console.log(invHrefs);
   for (let href of invHrefs) {
     const page: Page = await browser.newPage();
 
