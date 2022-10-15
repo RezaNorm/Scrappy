@@ -1,5 +1,6 @@
 import { promptDto } from "./prompt.dto";
 import { prompt } from "enquirer";
+import { providers } from "../information";
 
 export default class promptChoice {
   static async selectOption(): Promise<{ provider: string }> {
@@ -10,6 +11,7 @@ export default class promptChoice {
         message: "choose the provider",
         choices: [
           { name: "v12", message: "V12" },
+          { name: "carpages", message: "Carpages" },
           {
             name: "autobunny",
             value: "Autobunny",
@@ -28,7 +30,7 @@ export default class promptChoice {
           },
           {
             name: "dealerplus",
-            message: "Dealer plus",
+            message: "Dealer+",
           },
         ],
       },
@@ -38,19 +40,15 @@ export default class promptChoice {
   async checkProvider(provider: {
     provider: string;
   }): Promise<object | undefined> {
+    
     const chosenProvider: string = provider["provider"];
-    console.log(chosenProvider);
-    if (
-      chosenProvider === "v12" ||
-      chosenProvider === "autobunny" ||
-      chosenProvider === "zop" ||
-      chosenProvider === "dealerplus"
-    ) {
+
+    if (providers.includes(chosenProvider)) {
       return await prompt([
         {
           type: "input",
           name: "link",
-          message: "website address",
+          message: "inventory address",
         },
       ]);
     }

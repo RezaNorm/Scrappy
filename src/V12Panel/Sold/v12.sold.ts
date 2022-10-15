@@ -40,18 +40,20 @@ export default async function V12Sold(
     `#header > div:nth-child(11) > div.Win-Footer > div > a`,
     (element: any) => element.map((el: any) => el.textContent)
   );
-  const lastPage = +pagination.at(-1) - 1
+  const lastPage = +pagination.at(-1) - 1;
 
   pagination: for (let j = 1; j <= lastPage; j++) {
-    solds: for (let i = 4; i <= +soldCount! + i; i++) {
+    for (let i = 4; i <= +soldCount! + i; i++) {
       if (i === 24) {
-        console.log(j);
-        console.log(i);
         await page?.waitForXPath(
-          `/html/body/div[1]/div[1]/div[5]/div[2]/div/a[${j === 6 ? j = 5 : j}]`
+          `/html/body/div[1]/div[1]/div[5]/div[2]/div/a[${
+            j === 6 ? (j = 5) : j
+          }]`
         );
         const paginate: any = await page?.$x(
-          `/html/body/div[1]/div[1]/div[5]/div[2]/div/a[${j === 6 ? j = 5 : j}]`
+          `/html/body/div[1]/div[1]/div[5]/div[2]/div/a[${
+            j === 6 ? (j = 5) : j
+          }]`
         );
         await paginate[0].click();
         i = 3;

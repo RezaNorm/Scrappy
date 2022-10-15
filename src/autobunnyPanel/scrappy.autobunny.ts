@@ -2,7 +2,7 @@ import { writeFileSync } from "fs";
 import * as puppeteer from "puppeteer";
 import { Page, EvaluateFunc, ElementHandle, Browser } from "puppeteer";
 import Json from "../interfaces/json.interface";
-import { credentials } from "../credentials";
+import { credentials } from "../information";
 import autobunnyLogin from "./login/autobunny.login";
 import autobunnyInventory from "./inventory/autobunny.inventory";
 import autobunnySold from "./sold/autobunny.sold";

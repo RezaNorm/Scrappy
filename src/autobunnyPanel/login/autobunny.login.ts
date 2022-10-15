@@ -1,5 +1,5 @@
 import { Browser, Page } from "puppeteer";
-import { credentials } from "../../credentials";
+import { credentials } from "../../information";
 
 export default async function autobunnyLogin(
   username: string | undefined,

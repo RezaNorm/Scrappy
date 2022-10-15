@@ -13,6 +13,7 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { scrappyV12Website } from "./V12Website/scrappy.V12Website";
 import { scrappyZop } from "./zop/zop.scrappy";
 import { scrappyDealerplus } from "./dealerPlus/dealerplus.scrappy";
+import { carpagesScrappy } from "./carpages/scrappy.mrmemo.carpages";
 
 type information = {
   username?: string;
@@ -41,23 +42,39 @@ const initialiseScrappy = async (): Promise<void> => {
     ],
   });
 
-  let json: {} = {};
+  let json: any;
 
   switch (provider) {
     case "v12panel": {
-      json = await scrappyV12(browser, username, password);
+      try {
+        json = await scrappyV12(browser, username, password);
+      } catch (error) {
+        console.log(error);
+      }
       break;
     }
     case "autobunny": {
-      json = await scrappyAutobunny(browser, link);
+      try {
+        json = await scrappyAutobunny(browser, link);
+      } catch (error) {
+        console.log(error);
+      }
       break;
     }
     case "autobunnypanel": {
-      json = await scrappyAutobunnyPanel(browser, username, password);
+      try {
+        json = await scrappyAutobunnyPanel(browser, username, password);
+      } catch (error) {
+        console.log(error);
+      }
       break;
     }
     case "v12": {
-      json = await scrappyV12Website(browser, link);
+      try {
+        json = await scrappyV12Website(browser, link);
+      } catch (error) {
+        console.log(error);
+      }
       break;
     }
     case "zop": {
@@ -66,13 +83,24 @@ const initialiseScrappy = async (): Promise<void> => {
       } catch (error) {
         console.log(error);
       }
+      break;
     }
-    case "dealerplus": {
+    case "dealerplus":
+      {
+        try {
+          json = await scrappyDealerplus(browser, link);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      break;
+    case "carpages": {
       try {
-        json = await scrappyDealerplus(browser, link);
+        json = await carpagesScrappy(browser, link);
       } catch (error) {
         console.log(error);
       }
+      break;
     }
     default:
       break;
