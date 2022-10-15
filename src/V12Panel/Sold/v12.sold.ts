@@ -18,7 +18,15 @@ export default async function V12Sold(
     "#header > div:nth-child(11) > div.Header-Titleless > ul > li:nth-child(3) > a"
   );
 
-  //*[@id="header"]/div[5]/div[1]/ul/li[3]/a
+  // const perPageSelector = await page?.$$eval(
+  //   `#perpage`,
+  //   (element: any) => element.map((el: any) => el?.textContent)
+  // );
+  // console.log(perPageSelector);
+  // const largestPerPage = +perPageSelector.at(-1)
+  // await page?.waitForSelector("#perpage");
+  // await page?.select("#perpage", `${largestPerPage}`);
+
   await page?.waitForXPath(`//*[@id="header"]/div[5]/div[1]/ul/li[3]/a`);
   const soldCount = await page?.evaluate(
     (el: any) => el?.textContent.replace(/\D/g, ""),
@@ -27,31 +35,41 @@ export default async function V12Sold(
     )[0]
   );
 
-  console.log(soldCount);
+  console.log("sold count", soldCount);
+  let pagination = await page?.$$eval(
+    `#header > div:nth-child(11) > div.Win-Footer > div > a`,
+    (element: any) => element.map((el: any) => el.textContent)
+  );
+  const lastPage = +pagination.at(-1) - 1
 
-  for (let i = 4; i <= +soldCount! + i; i++) {
-    if (i === 24) {
-      await page?.waitForSelector(
-        "#header > div:nth-child(11) > div.Win-Footer > div > a"
-      ); //
-      await page?.click(
-        "#header > div:nth-child(11) > div.Win-Footer > div > a"
-      );
-      i = 3;
-      continue;
-    }
-    try {
-      await page?.waitForSelector(
-        `#header > div:nth-child(11) > table > tbody > tr:nth-child(${i}) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)`
-      );
+  pagination: for (let j = 1; j <= lastPage; j++) {
+    solds: for (let i = 4; i <= +soldCount! + i; i++) {
+      if (i === 24) {
+        console.log(j);
+        console.log(i);
+        await page?.waitForXPath(
+          `/html/body/div[1]/div[1]/div[5]/div[2]/div/a[${j === 6 ? j = 5 : j}]`
+        );
+        const paginate: any = await page?.$x(
+          `/html/body/div[1]/div[1]/div[5]/div[2]/div/a[${j === 6 ? j = 5 : j}]`
+        );
+        await paginate[0].click();
+        i = 3;
+        continue pagination;
+      }
+      try {
+        await page?.waitForSelector(
+          `#header > div:nth-child(11) > table > tbody > tr:nth-child(${i}) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)`
+        );
 
-      let link = await page?.$$eval(
-        `#header > div:nth-child(11) > table > tbody > tr:nth-child(${i}) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)`,
-        (element: any) => element.map((el: any) => el.getAttribute("href"))
-      );
-      hrefsSold.push(`https://www.v12software.com/inventory/${link}`);
-    } catch (error) {
-      break;
+        let link = await page?.$$eval(
+          `#header > div:nth-child(11) > table > tbody > tr:nth-child(${i}) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)`,
+          (element: any) => element.map((el: any) => el.getAttribute("href"))
+        );
+        hrefsSold.push(`https://www.v12software.com/inventory/${link}`);
+      } catch (error) {
+        break;
+      }
     }
   }
   for (let [index, href] of hrefsSold.entries()) {
