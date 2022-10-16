@@ -358,7 +358,7 @@ export default async function autobunnyInventory(
 
     wholeData["description"] = description[0];
 
-    json.active.push(wholeData);
+    json.deactive.push(wholeData);
     await page.close();
   }
 
