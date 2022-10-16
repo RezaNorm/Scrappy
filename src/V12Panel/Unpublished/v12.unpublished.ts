@@ -37,9 +37,7 @@ export default async function V12Unpublished(
   for (let i = 1; i <= +unpublish!; i++) {
     await page?.waitForSelector(
       `#unpulished > table.Block-List > tbody > tr:nth-child(${i}) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)`
-    ); //#header > div:nth-child(11) > table > tbody > tr:nth-child(4) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)
-    //#header > div:nth-child(11) > table > tbody > tr:nth-child(5) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)
-    //#header > div:nth-child(11) > table > tbody > tr:nth-child(22) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)
+    );
 
     let link = await page?.$$eval(
       `#unpulished > table.Block-List > tbody > tr:nth-child(${i}) > td.Cell-InvList-Vehicle.First-Column > a:nth-child(1)`,

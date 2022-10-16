@@ -18,15 +18,6 @@ export default async function V12Sold(
     "#header > div:nth-child(11) > div.Header-Titleless > ul > li:nth-child(3) > a"
   );
 
-  // const perPageSelector = await page?.$$eval(
-  //   `#perpage`,
-  //   (element: any) => element.map((el: any) => el?.textContent)
-  // );
-  // console.log(perPageSelector);
-  // const largestPerPage = +perPageSelector.at(-1)
-  // await page?.waitForSelector("#perpage");
-  // await page?.select("#perpage", `${largestPerPage}`);
-
   await page?.waitForXPath(`//*[@id="header"]/div[5]/div[1]/ul/li[3]/a`);
   const soldCount = await page?.evaluate(
     (el: any) => el?.textContent.replace(/\D/g, ""),

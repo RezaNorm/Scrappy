@@ -3,15 +3,17 @@ import { Page, EvaluateFunc, ElementHandle, Browser } from "puppeteer";
 import Json from "../../interfaces/json.interface";
 
 /**
- * 
- * @param page 
- * @param browser 
+ *
+ * @param page
+ * @param browser
  * @returns [{typeof Json}]
  */
 
 export default async function autobunnyCustomers(
   page: Page | undefined,
-  browser: Browser
+  browser: Browser,
+  username: string | undefined,
+  password: string | undefined
 ): Promise<Object[]> {
   const json: Object[] = [];
 
@@ -36,7 +38,7 @@ export default async function autobunnyCustomers(
     try {
       await page?.waitForSelector(
         `#dataTable > tbody > tr:nth-child(${i}) > td.no-sort.no-click.bread-actions > ul > li > ul > li:nth-child(1) > a`,
-        { timeout :100 }
+        { timeout: 100 }
       );
       const link = await page?.$$eval(
         `#dataTable > tbody > tr:nth-child(${i}) > td.no-sort.no-click.bread-actions > ul > li > ul > li:nth-child(1) > a`,
@@ -62,10 +64,24 @@ export default async function autobunnyCustomers(
     const wholeData: any = {};
 
     try {
-      console.log(link);
       await page.goto(link || "", { waitUntil: "domcontentloaded" });
     } catch (error) {
       continue;
+    }
+
+    //! if login page shows up out of nowhere ( autobunny bug )
+    if (page.url() === "https://dealers.autobunny.ca/client/login") {
+      //! type username pass
+      await page.type("#email", username || "");
+      await page.type("#passwordGroup > div > input", password || "");
+
+      //! login
+      await page.waitForSelector(
+        "body > div > div > div.col-xs-12.col-sm-5.col-md-4.login-sidebar > div > form > button"
+      );
+      await page.click(
+        "body > div > div > div.col-xs-12.col-sm-5.col-md-4.login-sidebar > div > form > button"
+      );
     }
 
     //! Get Personal Info
@@ -76,7 +92,7 @@ export default async function autobunnyCustomers(
             try {
               await page?.waitForSelector(
                 `#personalformation > div:nth-child(${i}) > div:nth-child(${j}) > div > div > label`,
-                { timeout : 100 }
+                { timeout: 100 }
               ); //
             } catch (error) {
               continue;
@@ -105,7 +121,7 @@ export default async function autobunnyCustomers(
           break;
         }
       }
-      console.log(wholeData)
+      console.log(wholeData);
       json.push(wholeData);
     } catch (error) {
       continue;

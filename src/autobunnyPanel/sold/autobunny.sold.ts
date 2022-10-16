@@ -4,7 +4,9 @@ import Json from "../../interfaces/json.interface";
 
 export default async function autobunnySold(
   page: Page | undefined,
-  browser: Browser
+  browser: Browser,
+  username: string | undefined,
+  password: string | undefined
 ): Promise<{ active: Json[]; deactive: Json[] }> {
   const json: { active: Json[]; deactive: Json[] } = {
     active: [],
@@ -71,6 +73,21 @@ export default async function autobunnySold(
     const page: Page = await browser.newPage();
     const wholeData: any = {};
     await page.goto(link || "", { waitUntil: "domcontentloaded" });
+
+      //! if login page shows up out of nowhere ( autobunny bug )
+      if (page.url() === "https://dealers.autobunny.ca/client/login") {
+        //! type username pass
+        await page.type("#email", username || "");
+        await page.type("#passwordGroup > div > input", password || "");
+  
+        //! login
+        await page.waitForSelector(
+          "body > div > div > div.col-xs-12.col-sm-5.col-md-4.login-sidebar > div > form > button"
+        );
+        await page.click(
+          "body > div > div > div.col-xs-12.col-sm-5.col-md-4.login-sidebar > div > form > button"
+        );
+      }
 
     try {
       await page.waitForSelector("#carousel > div > ul:nth-child(2)", {
