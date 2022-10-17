@@ -162,7 +162,6 @@ const initialiseScrappy = async (): Promise<void> => {
       .filter(Boolean)
       .map((op) => "$1$" + op);
 
-    console.log(wholeData.options.length, wholeData.vin);
     json.push(wholeData);
     await page?.close();
   }

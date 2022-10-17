@@ -1,6 +1,8 @@
 import * as puppeteer from "puppeteer";
 import { Page, EvaluateFunc, ElementHandle, Browser } from "puppeteer";
 import Json from "../../interfaces/json.interface";
+import * as cliProgress from "cli-progress";
+import colors from "ansi-colors";
 
 export default async function autobunnyInventory(
   page: Page | undefined,
@@ -38,8 +40,6 @@ export default async function autobunnyInventory(
     "#bread-actions > ul > li > ul > li:nth-child(1) > a",
     { timeout: 3000 }
   );
-
-  console.log("count shown", countShown);
 
   for (let i = 1; i <= countShown; i++) {
     try {
@@ -80,27 +80,19 @@ export default async function autobunnyInventory(
     } 
   }
 
-  // const links: (string | null)[] | undefined = await page?.evaluate(() => {
-  //   const link = [
-  //     ...new Set(
-  //       Array.from(
-  //         document.querySelectorAll(
-  //           "#bread-actions > ul > li > ul > li:nth-child(1) > a"
-  //         )
-  //       )
-  //         .map((el) => el.getAttribute("href"))
-  //         .flat()
-  //         .filter(Boolean)
-  //     ),
-  //   ];
+  let progressBar = new cliProgress.SingleBar({
+    format:
+      "getting active |" +
+      colors.cyan("{bar}") +
+      "| {percentage}%",
+    barCompleteChar: "\u2588",
+    barIncompleteChar: "\u2591",
+    hideCursor: true,
+  });
 
-  //   return link;
-  // });
+  progressBar.start(hrefs.active.length, 0);
 
-  console.log("active", hrefs.active.length);
-  console.log("not active", hrefs.deactive.length);
-
-  for (const link of hrefs.active) {
+  for (const [index,link] of hrefs.active.entries()) {
     const page: Page = await browser.newPage();
     const wholeData: any = {};
     await page.goto(link || "", { waitUntil: "domcontentloaded" });
@@ -148,21 +140,6 @@ export default async function autobunnyInventory(
     } catch (error) {
       wholeData["imgs"] = [];
     }
-
-    // const imageCount: number = await page.evaluate(() => {
-    //   const imagesLength = [
-    //     ...new Set(
-    //       Array.from(
-    //         document.querySelectorAll("#carousel > div > ul:nth-child(2)")
-    //       )
-    //         .map((el) => Array.from(el.children).length)
-    //         .flat()
-    //         .filter(Boolean)
-    //     ),
-    //   ];
-
-    //   return imagesLength[0];
-    // });
 
     //! Get Other Info
     for (let i = 1; i <= 13; i++) {
@@ -229,9 +206,24 @@ export default async function autobunnyInventory(
 
     json.active.push(wholeData);
     await page.close();
+    progressBar.increment();
+    progressBar.update(index + 1);
   }
+  progressBar?.stop();
 
-  for (const link of hrefs.deactive) {
+  progressBar = new cliProgress.SingleBar({
+    format:
+      "getting deactive cars |" +
+      colors.cyan("{bar}") +
+      "| {percentage}%",
+    barCompleteChar: "\u2588",
+    barIncompleteChar: "\u2591",
+    hideCursor: true,
+  });
+
+  progressBar.start(hrefs.deactive.length, 0);
+
+  for (const [index,link] of hrefs.deactive.entries()) {
     const page: Page = await browser.newPage();
     const wholeData: any = {};
     await page.goto(link || "", { waitUntil: "domcontentloaded" });
@@ -279,21 +271,6 @@ export default async function autobunnyInventory(
     } catch (error) {
       wholeData["imgs"] = [];
     }
-
-    // const imageCount: number = await page.evaluate(() => {
-    //   const imagesLength = [
-    //     ...new Set(
-    //       Array.from(
-    //         document.querySelectorAll("#carousel > div > ul:nth-child(2)")
-    //       )
-    //         .map((el) => Array.from(el.children).length)
-    //         .flat()
-    //         .filter(Boolean)
-    //     ),
-    //   ];
-
-    //   return imagesLength[0];
-    // });
 
     //! Get Other Info
     for (let i = 1; i <= 13; i++) {
@@ -360,7 +337,10 @@ export default async function autobunnyInventory(
 
     json.deactive.push(wholeData);
     await page.close();
+    progressBar.increment();
+    progressBar.update(index + 1);
   }
+  progressBar?.stop();
 
   return json;
 }
