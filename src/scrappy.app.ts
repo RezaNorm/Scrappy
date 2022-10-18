@@ -34,7 +34,7 @@ const initialiseScrappy = async (): Promise<void> => {
   puppeteer.use(AdblockerPlugin()).use(StealthPlugin());
 
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",

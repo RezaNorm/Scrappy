@@ -121,7 +121,7 @@ export default async function autobunnyCustomers(
           break;
         }
       }
-      console.log(wholeData);
+      // console.log(wholeData);
       json.push(wholeData);
     } catch (error) {
       continue;
