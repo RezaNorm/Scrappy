@@ -1,5 +1,8 @@
 import { Browser, Page } from "puppeteer";
 import Json from "../interfaces/json.interface";
+import * as cliProgress from "cli-progress";
+import colors from "ansi-colors";
+
 export const scrappyAutobunny = async (
   browser: Browser,
   link: string | undefined
@@ -47,7 +50,7 @@ export const scrappyAutobunny = async (
 
       invHrefs.push(link);
     } catch (error) {
-      console.log(i);
+     
       try {
         await page.click(
           `#main > div > div:nth-child(2) > div > div > div > div:nth-child(${i}) > div > div > div > a.next.page-numbers`
@@ -61,8 +64,17 @@ export const scrappyAutobunny = async (
   }
 
   invHrefs = invHrefs.flat();
-  // console.log(invHrefs);
-  for (let href of invHrefs) {
+
+  let progressBar = new cliProgress.SingleBar({
+    format: "getting cars |" + colors.cyan("{bar}") + "| {percentage}%",
+    barCompleteChar: "\u2588",
+    barIncompleteChar: "\u2591",
+    hideCursor: true,
+  });
+
+  progressBar.start(invHrefs.length, 0);
+
+  for (let [index,href] of invHrefs.entries()) {
     const page: Page = await browser.newPage();
 
     await page.goto(href, { waitUntil: "domcontentloaded", timeout: 0 });
@@ -143,7 +155,7 @@ export const scrappyAutobunny = async (
         (element: any) =>
           element.map((el: any) => el?.getAttribute("data-cg-vin"))[1]
       );
-      console.log("vin num", vin);
+      
       price = await page.$eval(
         "body > div.container.main-content-area.main-content-area-page.detailsPage > div > div.row > div > div.panel.panel-default.vehicle-details > div.panel-heading > div > div > div.col-md-4.detailsInfo > div > span.PriceValue > span",
         (element: any) => {
@@ -214,7 +226,11 @@ export const scrappyAutobunny = async (
     json.push(wholeInfo);
 
     await page.close();
+    progressBar.increment();
+    progressBar.update(index + 1);
   }
+  progressBar?.stop();
+
   await page.close();
   return json;
 };
