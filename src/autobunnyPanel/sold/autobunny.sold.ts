@@ -64,6 +64,7 @@ export default async function autobunnySold(
       const button = await page?.$("#dataTable_next > a");
       await button?.evaluate((b: any) => b.click());
       i = 0;
+      await page?.waitForNetworkIdle({ timeout: 0 });
       continue;
     } else if (nextbutton.includes("disabled")) break;
   }
@@ -125,21 +126,6 @@ export default async function autobunnySold(
       wholeData["imgs"] = [];
     }
 
-    // const imageCount: number = await page.evaluate(() => {
-    //   const imagesLength = [
-    //     ...new Set(
-    //       Array.from(
-    //         document.querySelectorAll("#carousel > div > ul:nth-child(2)")
-    //       )
-    //         .map((el) => Array.from(el.children).length)
-    //         .flat()
-    //         .filter(Boolean)
-    //     ),
-    //   ];
-
-    //   return imagesLength[0];
-    // });
-
     //! Get Other Info
     for (let i = 1; i <= 13; i++) {
       try {
@@ -194,7 +180,7 @@ export default async function autobunnySold(
         .filter(Boolean)
         .map((op: string) => `$1$` + op);
 
-    wholeData["options"] = options || ""
+    wholeData["options"] = options || "";
 
     //! Get Comment
     const description = await page?.$$eval(
@@ -338,7 +324,7 @@ export default async function autobunnySold(
         .filter(Boolean)
         .map((op: string) => `$1$` + op);
 
-    wholeData["options"] = options || ""
+    wholeData["options"] = options || "";
 
     //! Get Comment
     const description = await page?.$$eval(
