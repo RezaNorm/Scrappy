@@ -59,8 +59,7 @@ export const scrappyDealerplus = async (
       }
     }
   }
-  console.log("inventory", invHrefs);
-  console.log("inventory length", invHrefs.length);
+
   try {
     for (const link of invHrefs) {
       const page: Page = await browser.newPage();
