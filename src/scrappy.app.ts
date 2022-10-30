@@ -14,6 +14,7 @@ import { scrappyV12Website } from "./V12Website/scrappy.V12Website";
 import { scrappyZop } from "./zop/zop.scrappy";
 import { scrappyDealerplus } from "./dealerPlus/dealerplus.scrappy";
 import { carpagesScrappy } from "./carpages/scrappy.mrmemo.carpages";
+import { scrappyMvic } from './mvic/scrappy.mvic';
 
 type information = {
   username?: string;
@@ -22,6 +23,7 @@ type information = {
 };
 
 const initialiseScrappy = async (): Promise<void> => {
+  //! command line choices
   const prompt = new promptChoice();
   const chosenProvider = await promptChoice.selectOption();
   const { provider } = chosenProvider;
@@ -34,7 +36,7 @@ const initialiseScrappy = async (): Promise<void> => {
   puppeteer.use(AdblockerPlugin()).use(StealthPlugin());
 
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -48,6 +50,14 @@ const initialiseScrappy = async (): Promise<void> => {
     case "v12panel": {
       try {
         json = await scrappyV12(browser, username, password);
+      } catch (error) {
+        console.log(error);
+      }
+      break;
+    }
+    case "mvic": {
+      try {
+        json = await scrappyMvic(browser, link);
       } catch (error) {
         console.log(error);
       }

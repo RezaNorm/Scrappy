@@ -24,11 +24,14 @@ export default async function autobunnySold(
     waitUntil: "domcontentloaded",
   });
 
+  //! show 100 vehicle on the sold page
   const count = 100;
 
   await page?.waitForSelector("#dataTable_length > label > select");
   await page?.select("#dataTable_length > label > select", `${count}`);
 
+
+  //! get view detail links separated by active and inactive
   for (let i = 1; i <= count; i++) {
     try {
       await page?.waitForSelector(
@@ -42,7 +45,8 @@ export default async function autobunnySold(
       }
     }
 
-    const links = await page?.$$eval(
+    let links;
+     links = await page?.$$eval(
       `#dataTable > tbody > tr:nth-child(${i}) > td.yc-column-2.yc-column-img.yc-tooltip > span > a`,
       (element: any) => element.map((el: any) => el?.getAttribute("href"))[0]
     );
@@ -66,17 +70,20 @@ export default async function autobunnySold(
       i = 0;
       await page?.waitForNetworkIdle({ timeout: 0 });
       continue;
-    } else if (nextbutton.includes("disabled")) break;
+    } else if (nextbutton.includes("disabled") && !links) break;
   }
 
+  //! Progress Bar
   let progressBar = new cliProgress.SingleBar({
-    format: "getting active solds |" + colors.cyan("{bar}") + "| {percentage}%",
+    format: "Getting Active Solds |" + colors.cyan("{bar}") + "| {percentage}%",
     barCompleteChar: "\u2588",
     barIncompleteChar: "\u2591",
     hideCursor: true,
   });
 
   progressBar.start(hrefs.active.length, 0);
+
+//! opening view detail links one by one
   for (const [index, link] of hrefs.active.entries()) {
     const page: Page = await browser.newPage();
     const wholeData: any = {};
@@ -199,7 +206,7 @@ export default async function autobunnySold(
 
   progressBar = new cliProgress.SingleBar({
     format:
-      "getting deactive solds |" + colors.cyan("{bar}") + "| {percentage}%",
+      "Getting Deactive Solds |" + colors.cyan("{bar}") + "| {percentage}%",
     barCompleteChar: "\u2588",
     barIncompleteChar: "\u2591",
     hideCursor: true,

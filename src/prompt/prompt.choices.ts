@@ -11,6 +11,7 @@ export default class promptChoice {
         message: "choose the provider",
         choices: [
           { name: "v12", message: "V12" },
+          { name: "mvic", message: "MVIC" },
           { name: "carpages", message: "Carpages" },
           {
             name: "autobunny",
@@ -30,7 +31,7 @@ export default class promptChoice {
           },
           {
             name: "dealerplus",
-            message: "Dealer+",
+            message: "Dealersite+",
           },
         ],
       },

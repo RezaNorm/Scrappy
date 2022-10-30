@@ -14,6 +14,7 @@ export const scrappyAutobunny = async (
   await page.goto(link || "", { waitUntil: "domcontentloaded" });
   let count;
 
+  //! Selecting show 100 vehicles if exists
   try {
     await page?.waitForSelector(
       "#main > div > div:nth-child(2) > div > div > div > div.row.sortingPaging > div.col-sm-4.sortingPagingView > a:nth-child(5)"
@@ -36,6 +37,7 @@ export const scrappyAutobunny = async (
   );
   console.log("invntory count", invCount);
 
+  //! Finding View Details Links
   for (let i = 3; i <= +count!; i++) {
     try {
       await page.waitForSelector(
@@ -74,6 +76,7 @@ export const scrappyAutobunny = async (
 
   progressBar.start(invHrefs.length, 0);
 
+  //! Opening view detail links one by one and scrape the details
   for (let [index,href] of invHrefs.entries()) {
     const page: Page = await browser.newPage();
 
