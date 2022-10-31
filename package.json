@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "scrappy": "npx ts-node ./src/scrappy.app.ts"
+    "scrappy": "npx ts-node ./src/main.app.ts"
   },
   "author": "",
   "license": "ISC",
