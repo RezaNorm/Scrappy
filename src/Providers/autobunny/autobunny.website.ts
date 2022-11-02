@@ -17,7 +17,7 @@ export const scrappyAutobunny = async (
   //! Selecting show 100 vehicles if exists
   try {
     await page?.waitForSelector(
-      "#main > div > div:nth-child(2) > div > div > div > div.row.sortingPaging > div.col-sm-4.sortingPagingView > a:nth-child(5)"
+      "#main > div > div:nth-child(2) > div > div > div > div.row.sortingPaging > div.col-sm-4.sortingPagingView > a:nth-child(5)",
     );
     await page?.click(
       "#main > div > div:nth-child(2) > div > div > div > div.row.sortingPaging > div.col-sm-4.sortingPagingView > a:nth-child(5)"
