@@ -102,16 +102,16 @@ export default async function autobunnyCustomers(
     //! Get Personal Info
     try {
       for (let i = 1; i <= 13; i++) {
-        try {
+        // try {
           for (let j = 1; j <= 2; j++) {
-            try {
+            // try {
               await page?.waitForSelector(
                 `#personalformation > div:nth-child(${i}) > div:nth-child(${j}) > div > div > label`,
                 { timeout: 100 }
               ); //
-            } catch (error) {
-              continue;
-            }
+            // } catch (error) {
+            //   continue;
+            // }
             const key = await page?.$$eval(
               `#personalformation > div:nth-child(${i}) > div:nth-child(${j}) > div > div > label`,
               (element: any) =>
@@ -132,9 +132,9 @@ export default async function autobunnyCustomers(
             );
             wholeData[key] = value;
           }
-        } catch (error) {
-          break;
-        }
+        // } catch (error) {
+        //   break;
+        // }
       }
       // console.log(wholeData);
       json.push(wholeData);

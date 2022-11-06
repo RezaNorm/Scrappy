@@ -24,11 +24,10 @@ export default async function autobunnySold(
     waitUntil: "domcontentloaded",
   });
 
-  let allVisibility = false;
   try {
     await page?.waitForSelector("#dataTable_length > label > select");
     await page?.select("#dataTable_length > label > select", `${-1}`);
-    allVisibility = true;
+
   } catch (error) {
     await page?.waitForSelector("#dataTable_length > label > select");
     await page?.select("#dataTable_length > label > select", `${100}`);
@@ -80,11 +79,7 @@ export default async function autobunnySold(
       `#dataTable_info`,
       (element: any) => element.map((el: any) => el?.textContent)[0]
     );
-    const previousButton = await page?.$$eval(
-      `#dataTable_previous`,
-      (element: any) => element.map((el: any) => el?.getAttribute("class"))[0]
-    );
-    
+
     const allCars = showing.split("to")[1].split("of")[1].replace(/\D/g, "");
 
     if (!nextbutton.includes("disabled") && i === visibleCars) {
