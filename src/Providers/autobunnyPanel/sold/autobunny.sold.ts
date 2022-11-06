@@ -27,8 +27,14 @@ export default async function autobunnySold(
   //! show 100 vehicle on the sold page
   const count = 100;
 
-  await page?.waitForSelector("#dataTable_length > label > select");
-  await page?.select("#dataTable_length > label > select", `${count}`);
+  try {
+    await page?.waitForSelector("#dataTable_length > label > select");
+    await page?.select("#dataTable_length > label > select", `${count}`);
+  } catch (error) {
+    console.log(error);
+    // await page?.waitForSelector("#dataTable_length > label > select");
+    // await page?.select("#dataTable_length > label > select", `${-1}`);
+  }
 
 
   //! get view detail links separated by active and inactive
@@ -68,7 +74,7 @@ export default async function autobunnySold(
       const button = await page?.$("#dataTable_next > a");
       await button?.evaluate((b: any) => b.click());
       i = 0;
-      await page?.waitForNetworkIdle({ timeout: 0 });
+      // await page?.waitForNetworkIdle({ timeout: 0 });  
       continue;
     } else if (nextbutton.includes("disabled") && !links) break;
   }

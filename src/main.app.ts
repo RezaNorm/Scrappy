@@ -29,7 +29,7 @@ const initialiseScrappy = async (): Promise<void> => {
   puppeteer.use(AdblockerPlugin()).use(StealthPlugin());
 
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -42,7 +42,7 @@ const initialiseScrappy = async (): Promise<void> => {
   await browser.close();
 
   writeFileSync(
-    `${resolve(`../json/${fileName}`)}.json`,
+    `${resolve(`./json/${fileName}`)}.json`,
     JSON.stringify(json),
     "utf8"
   );

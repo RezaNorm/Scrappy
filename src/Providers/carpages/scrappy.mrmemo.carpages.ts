@@ -41,7 +41,7 @@ export const carpagesScrappy = async (
   } catch (error) {
     iteration = 21;
   }
-  for (let i = 1; i <= +iteration; i++) {
+  for (let i = 1; i <= +iteration + 3; i++) {
     try {
       await page?.waitForSelector(
         `body > div.main-container > div > div > div.col-12.col-lg-8 > div.box > div:nth-child(${i}) > div > div > div.l-column.l-column--large-8 > hgroup > h4 > a`,
@@ -61,8 +61,6 @@ export const carpagesScrappy = async (
     const page: Page = await browser.newPage();
 
     await page.goto(href, { waitUntil: "domcontentloaded", timeout: 0 });
-
-    console.log(href);
 
     const wholeData: any = {};
 
@@ -97,12 +95,19 @@ export const carpagesScrappy = async (
           `#vhcl-info > div.vhcl-info > div.vhcl-info__moreDetails.push--top > ul > li:nth-child(${j})`,
           (element: any) => element.map((el: any) => el?.textContent)
         );
-        wholeData[key] = value[0].replace("VIN: ","").replace("Stock #: ","").trim();
+        wholeData[key] = value[0]
+          .replace("VIN: ", "")
+          .replace("Stock #: ", "")
+          .trim();
       } catch (error) {
         continue;
       }
     }
-
+    const trim = await page?.$$eval(
+      "#vhcl-info > div:nth-child(1) > div > div > div > div.hgroup.fx.fd-c.ai-c.ai-fs--medium.wrap.hidden--print.fs.fg.push-bottom.push-none-bottom-medium > h3",
+      (element: any) => element.map((el: any) => el?.innerHTML)
+    );
+    wholeData["trim"] = trim[0];
     const description = await page?.$$eval(
       "#cpVehicleComments",
       (element: any) => element.map((el: any) => el?.innerHTML)
@@ -115,12 +120,10 @@ export const carpagesScrappy = async (
         element.map((el: any) => Array.from(el?.children).length)[0]
     );
 
-    console.log("detail length", detailLength);
-
     const price = await page?.$$eval("#vdpPrice > h3", (element: any) =>
       element.map((el: any) => el?.textContent.replace(/\D/g, ""))
     );
-    wholeData["price"] = price[0];
+    wholeData["price"] = price[0] || "sold"
 
     for (let i = 1; i <= +detailLength; i++) {
       try {
