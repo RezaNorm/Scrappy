@@ -24,21 +24,26 @@ export default async function autobunnySold(
     waitUntil: "domcontentloaded",
   });
 
-  //! show 100 vehicle on the sold page
-  const count = 100;
-
+  let allVisibility = false;
   try {
     await page?.waitForSelector("#dataTable_length > label > select");
-    await page?.select("#dataTable_length > label > select", `${count}`);
+    await page?.select("#dataTable_length > label > select", `${-1}`);
+    allVisibility = true;
   } catch (error) {
-    console.log(error);
-    // await page?.waitForSelector("#dataTable_length > label > select");
-    // await page?.select("#dataTable_length > label > select", `${-1}`);
+    await page?.waitForSelector("#dataTable_length > label > select");
+    await page?.select("#dataTable_length > label > select", `${100}`);
   }
 
+  //! show all or 100 vehicle on the sold page
+  let visibleCars = await page?.$$eval(
+    `#dataTable_info`,
+    (element: any) => element.map((el: any) => el?.textContent)[0]
+  );
+
+  visibleCars = visibleCars.split("to")[1].split("of")[0].replace(/\D/g, "");
 
   //! get view detail links separated by active and inactive
-  for (let i = 1; i <= count; i++) {
+  for (let i = 1; i <= +visibleCars; i++) {
     try {
       await page?.waitForSelector(
         `#dataTable > tbody > tr:nth-child(${i}) > td.yc-column-2.yc-column-img.yc-tooltip > span > a`
@@ -52,7 +57,7 @@ export default async function autobunnySold(
     }
 
     let links;
-     links = await page?.$$eval(
+    links = await page?.$$eval(
       `#dataTable > tbody > tr:nth-child(${i}) > td.yc-column-2.yc-column-img.yc-tooltip > span > a`,
       (element: any) => element.map((el: any) => el?.getAttribute("href"))[0]
     );
@@ -70,13 +75,29 @@ export default async function autobunnySold(
       `#dataTable_next`,
       (element: any) => element.map((el: any) => el?.getAttribute("class"))[0]
     );
-    if (!nextbutton.includes("disabled") && i === count) {
+
+    const showing = await page?.$$eval(
+      `#dataTable_info`,
+      (element: any) => element.map((el: any) => el?.textContent)[0]
+    );
+    const previousButton = await page?.$$eval(
+      `#dataTable_previous`,
+      (element: any) => element.map((el: any) => el?.getAttribute("class"))[0]
+    );
+    
+    const allCars = showing.split("to")[1].split("of")[1].replace(/\D/g, "");
+
+    if (!nextbutton.includes("disabled") && i === visibleCars) {
       const button = await page?.$("#dataTable_next > a");
       await button?.evaluate((b: any) => b.click());
       i = 0;
-      // await page?.waitForNetworkIdle({ timeout: 0 });  
+      await page?.waitForNetworkIdle({ timeout: 0 });
       continue;
-    } else if (nextbutton.includes("disabled") && !links) break;
+    } else if (
+      nextbutton.includes("disabled") &&
+      hrefs.active.length + hrefs.deactive.length === +allCars
+    )
+      break;
   }
 
   //! Progress Bar
@@ -89,7 +110,7 @@ export default async function autobunnySold(
 
   progressBar.start(hrefs.active.length, 0);
 
-//! opening view detail links one by one
+  //! opening view detail links one by one
   for (const [index, link] of hrefs.active.entries()) {
     const page: Page = await browser.newPage();
     const wholeData: any = {};
